@@ -1,17 +1,21 @@
 :root {
-  --warna-latar: #f4f7fb;
+  --warna-latar: #f6f8fc;
   --warna-kartu: #ffffff;
-  --warna-kartu-lembut: #eef4ff;
-  --warna-teks: #182033;
-  --warna-teks-lembut: #667085;
-  --warna-garis: #dde5f2;
-  --warna-utama: #2563eb;
-  --warna-utama-gelap: #1d4ed8;
+  --warna-kartu-transparan: rgba(255, 255, 255, 0.82);
+  --warna-kartu-lembut: #edf4ff;
+  --warna-teks: #111827;
+  --warna-teks-lembut: #64748b;
+  --warna-garis: #e2e8f0;
+  --warna-utama: #3b82f6;
+  --warna-utama-gelap: #2563eb;
   --warna-bahaya: #dc2626;
   --warna-peringatan: #d97706;
   --warna-sukses: #16a34a;
-  --bayangan-kartu: 0 18px 40px rgba(24, 32, 51, 0.08);
-  --radius-kartu: 8px;
+  --gradient-utama: linear-gradient(135deg, #3b82f6, #06b6d4);
+  --bayangan-kartu: 0 18px 45px rgba(15, 23, 42, 0.08);
+  --bayangan-melayang: 0 20px 60px rgba(15, 23, 42, 0.16);
+  --radius-kartu: 18px;
+  --radius-kecil: 12px;
 }
 
 * {
@@ -22,9 +26,13 @@
 
 body {
   min-height: 100vh;
-  background: var(--warna-latar);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
+    linear-gradient(180deg, #fbfdff 0%, var(--warna-latar) 44%);
   color: var(--warna-teks);
   font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.5;
+  scroll-behavior: smooth;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -49,7 +57,8 @@ button {
   width: 260px;
   height: 100vh;
   padding: 24px;
-  background: var(--warna-kartu);
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(18px);
   border-right: 1px solid var(--warna-garis);
   box-shadow: var(--bayangan-kartu);
   transition: background-color 0.25s ease, border-color 0.25s ease;
@@ -67,8 +76,8 @@ button {
   width: 42px;
   height: 42px;
   place-items: center;
-  border-radius: var(--radius-kartu);
-  background: var(--warna-utama);
+  border-radius: 14px;
+  background: var(--gradient-utama);
   color: #ffffff;
   font-weight: 800;
 }
@@ -92,7 +101,7 @@ button {
   width: 100%;
   padding: 12px 14px;
   border: 0;
-  border-radius: var(--radius-kartu);
+  border-radius: 14px;
   background: transparent;
   color: var(--warna-teks-lembut);
   text-align: left;
@@ -127,7 +136,7 @@ button {
 
 .kepala-halaman h1 {
   margin-top: 4px;
-  font-size: 28px;
+  font-size: clamp(22px, 3vw, 30px);
   line-height: 1.2;
 }
 
@@ -223,13 +232,27 @@ button {
 .kotak-kosong {
   border: 1px solid var(--warna-garis);
   border-radius: var(--radius-kartu);
-  background: var(--warna-kartu);
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(16px);
   box-shadow: var(--bayangan-kartu);
   transition: transform 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .kartu-statistik {
-  padding: 18px;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.kartu-statistik::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  top: -28px;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .kartu-statistik:hover,
@@ -244,7 +267,7 @@ button {
 
 .kartu-statistik h3 {
   margin-top: 10px;
-  font-size: 30px;
+  font-size: clamp(28px, 5vw, 36px);
 }
 
 .warna-biru { border-left: 5px solid var(--warna-utama); }
@@ -253,7 +276,7 @@ button {
 .warna-merah { border-left: 5px solid var(--warna-bahaya); }
 
 .panel {
-  padding: 18px;
+  padding: 20px;
 }
 
 .panel h3 {
@@ -320,10 +343,10 @@ label {
 input,
 select {
   width: 100%;
-  min-height: 42px;
+  min-height: 46px;
   padding: 10px 12px;
   border: 1px solid var(--warna-garis);
-  border-radius: var(--radius-kartu);
+  border-radius: var(--radius-kecil);
   background: #ffffff;
   color: var(--warna-teks);
   outline: none;
@@ -351,9 +374,9 @@ select:focus {
 .tombol-kecil,
 .tombol-kedua,
 .tombol-ikon {
-  min-height: 42px;
+  min-height: 46px;
   border: 0;
-  border-radius: var(--radius-kartu);
+  border-radius: var(--radius-kecil);
   font-weight: 700;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
@@ -361,13 +384,13 @@ select:focus {
 .tombol-utama {
   align-self: end;
   padding: 0 18px;
-  background: var(--warna-utama);
+  background: var(--gradient-utama);
   color: #ffffff;
 }
 
 .tombol-utama:hover {
-  background: var(--warna-utama-gelap);
   transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(59, 130, 246, 0.22);
 }
 
 .tombol-kedua,
@@ -434,7 +457,7 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px;
+  padding: 18px;
 }
 
 .bagian-utama-tugas {
@@ -445,9 +468,9 @@ select:focus {
 }
 
 .checkbox-tugas {
-  width: 20px;
-  min-width: 20px;
-  height: 20px;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
   margin-top: 3px;
   accent-color: var(--warna-utama);
 }
@@ -474,6 +497,10 @@ select:focus {
 .tugas-selesai .judul-tugas {
   color: var(--warna-teks-lembut);
   text-decoration: line-through;
+}
+
+.tugas-selesai {
+  opacity: 0.82;
 }
 
 .label-status {
@@ -514,7 +541,8 @@ select:focus {
 .kartu-kalender {
   border: 1px solid var(--warna-garis);
   border-radius: var(--radius-kartu);
-  background: var(--warna-kartu);
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(16px);
   box-shadow: var(--bayangan-kartu);
   overflow: hidden;
 }
@@ -571,7 +599,7 @@ select:focus {
   border: 0;
   border-right: 1px solid var(--warna-garis);
   border-bottom: 1px solid var(--warna-garis);
-  background: var(--warna-kartu);
+  background: rgba(255, 255, 255, 0.74);
   color: var(--warna-teks);
   text-align: left;
   transition: background-color 0.2s ease;
@@ -615,7 +643,7 @@ select:focus {
 }
 
 .tanggal-hari-ini .angka-tanggal {
-  background: var(--warna-utama);
+  background: var(--gradient-utama);
   color: #ffffff;
 }
 
@@ -716,8 +744,8 @@ select:focus {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(14px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.22s ease;
@@ -734,7 +762,8 @@ select:focus {
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 18px;
-  background: var(--warna-kartu);
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(20px);
   box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28);
   transform: translateY(12px) scale(0.96);
   transition: transform 0.22s ease, background-color 0.25s ease, border-color 0.25s ease;
@@ -812,7 +841,7 @@ select:focus {
 }
 
 .tombol-modal-utama {
-  background: var(--warna-utama);
+  background: var(--gradient-utama);
   color: #ffffff;
   box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
 }
@@ -832,13 +861,20 @@ select:focus {
 }
 
 body.mode-gelap {
-  --warna-latar: #101828;
-  --warna-kartu: #172033;
-  --warna-kartu-lembut: #1d2b47;
+  --warna-latar: #121826;
+  --warna-kartu: #1b2537;
+  --warna-kartu-transparan: rgba(27, 37, 55, 0.86);
+  --warna-kartu-lembut: #263449;
   --warna-teks: #f8fafc;
   --warna-teks-lembut: #a9b4c7;
-  --warna-garis: #29364f;
+  --warna-garis: #334155;
   --bayangan-kartu: 0 18px 40px rgba(0, 0, 0, 0.2);
+}
+
+body.mode-gelap {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
+    linear-gradient(180deg, #111827 0%, var(--warna-latar) 48%);
 }
 
 body.mode-gelap input,
@@ -887,6 +923,73 @@ body.mode-gelap .tanggal-luar-bulan {
   background: #111827;
 }
 
+body.mode-gelap .kotak-tanggal {
+  background: rgba(27, 37, 55, 0.72);
+}
+
+.tombol-tambah-cepat {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 35;
+  display: none;
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--gradient-utama);
+  color: #ffffff;
+  box-shadow: var(--bayangan-melayang);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tombol-tambah-cepat:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+.wadah-toast {
+  position: fixed;
+  right: 22px;
+  bottom: 96px;
+  z-index: 60;
+  display: grid;
+  gap: 10px;
+  width: min(340px, calc(100% - 44px));
+  pointer-events: none;
+}
+
+.toast {
+  padding: 13px 15px;
+  border: 1px solid var(--warna-garis);
+  border-radius: 16px;
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(18px);
+  color: var(--warna-teks);
+  box-shadow: var(--bayangan-melayang);
+  font-size: 14px;
+  animation: animasiToastMasuk 0.22s ease;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.toast-keluar {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+}
+
+@keyframes animasiToastMasuk {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (max-width: 1024px) {
   .grid-statistik,
   .grid-konten,
@@ -909,25 +1012,37 @@ body.mode-gelap .tanggal-luar-bulan {
   }
 
   .menu-samping {
-    position: static;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    z-index: 30;
     width: 100%;
     height: auto;
-    padding: 16px;
+    width: auto;
+    padding: 8px;
+    border: 1px solid var(--warna-garis);
+    border-radius: 24px;
+    box-shadow: var(--bayangan-melayang);
   }
 
   .identitas-aplikasi {
-    margin-bottom: 16px;
+    display: none;
   }
 
   .daftar-menu {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    gap: 6px;
   }
 
   .tombol-menu {
-    padding: 10px 8px;
+    min-height: 54px;
+    padding: 8px 6px;
+    border-radius: 18px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 800;
   }
 
   .tombol-menu:hover,
@@ -937,11 +1052,19 @@ body.mode-gelap .tanggal-luar-bulan {
 
   .konten-utama {
     width: 100%;
-    padding: 18px;
+    padding: 18px 16px 108px;
   }
 
   .kepala-halaman {
     align-items: flex-start;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin: -18px -16px 18px;
+    padding: 16px;
+    background: rgba(246, 248, 252, 0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
   }
 
   .kepala-halaman h1 {
@@ -960,6 +1083,28 @@ body.mode-gelap .tanggal-luar-bulan {
   .alat-filter-tugas,
   .baris-form {
     grid-template-columns: 1fr;
+  }
+
+  .grid-statistik {
+    gap: 12px;
+  }
+
+  .kartu-statistik,
+  .panel,
+  .item-tugas,
+  .kartu-kalender {
+    border-radius: 22px;
+  }
+
+  .form-tugas {
+    border-radius: 22px;
+    padding: 14px;
+  }
+
+  .tombol-utama,
+  .tombol-kedua,
+  .tombol-bahaya {
+    width: 100%;
   }
 
   .judul-bagian,
@@ -984,13 +1129,31 @@ body.mode-gelap .tanggal-luar-bulan {
   }
 
   .kotak-tanggal {
-    min-height: 96px;
-    padding: 7px;
+    min-height: 92px;
+    padding: 6px;
   }
 
   .label-jadwal {
     padding: 4px 5px;
     font-size: 11px;
+  }
+
+  .tombol-tambah-cepat {
+    display: grid;
+    place-items: center;
+    right: 18px;
+    bottom: 92px;
+  }
+
+  .wadah-toast {
+    right: 16px;
+    bottom: 164px;
+    width: calc(100% - 32px);
+  }
+
+  body.mode-gelap .kepala-halaman {
+    background: rgba(18, 24, 38, 0.82);
+    border-bottom-color: rgba(51, 65, 85, 0.72);
   }
 
   .item-tugas,
@@ -1025,5 +1188,30 @@ body.mode-gelap .tanggal-luar-bulan {
   .foto-profil-header {
     width: 40px;
     height: 40px;
+  }
+
+  .grid-statistik {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kartu-statistik {
+    padding: 16px;
+  }
+
+  .kartu-statistik p {
+    font-size: 12px;
+  }
+
+  .kartu-statistik h3 {
+    font-size: 28px;
+  }
+
+  .isi-kalender {
+    overflow-x: auto;
+  }
+
+  .nama-hari-kalender,
+  .isi-kalender {
+    min-width: 620px;
   }
 }

@@ -121,7 +121,10 @@ const elemenHalaman = {
   pesanErrorNamaJadwal: document.getElementById("pesanErrorNamaJadwal"),
   pesanErrorTanggalJadwal: document.getElementById("pesanErrorTanggalJadwal"),
   pesanErrorJamJadwal: document.getElementById("pesanErrorJamJadwal"),
-  tombolBatalJadwal: document.getElementById("tombolBatalJadwal")
+  tombolBatalJadwal: document.getElementById("tombolBatalJadwal"),
+
+  tombolTambahCepatMobile: document.getElementById("tombolTambahCepatMobile"),
+  wadahToast: document.getElementById("wadahToast")
 };
 
 let fungsiJawabanModalKonfirmasi = null;
@@ -240,6 +243,22 @@ function amankanTeksUntukHtml(teks) {
 
 function buatTampilanKosong(pesan) {
   return `<div class="kotak-kosong">${pesan}</div>`;
+}
+
+function tampilkanToast(pesan) {
+  const toastBaru = document.createElement("div");
+
+  toastBaru.className = "toast";
+  toastBaru.textContent = pesan;
+  elemenHalaman.wadahToast.appendChild(toastBaru);
+
+  setTimeout(function () {
+    toastBaru.classList.add("toast-keluar");
+  }, 2400);
+
+  setTimeout(function () {
+    toastBaru.remove();
+  }, 2800);
 }
 
 /*
@@ -763,6 +782,7 @@ function simpanNamaPengguna() {
 
   localStorage.setItem(namaPenyimpananLocalStorage.namaPengguna, namaPengguna);
   tampilkanNamaPengguna(namaPengguna);
+  tampilkanToast("Nama profil berhasil disimpan.");
 }
 
 function tampilkanNamaPengguna(namaPengguna) {
@@ -895,6 +915,7 @@ async function prosesUploadFotoProfil(event) {
     const fotoYangSudahDiperkecil = await perkecilUkuranFoto(fotoAsli);
     localStorage.setItem(namaPenyimpananLocalStorage.fotoProfil, fotoYangSudahDiperkecil);
     tampilkanFotoProfil(fotoYangSudahDiperkecil);
+    tampilkanToast("Foto profil berhasil diperbarui.");
   } catch (error) {
     tampilkanErrorFotoProfil(error.message);
   } finally {
@@ -906,6 +927,7 @@ function hapusFotoProfil() {
   localStorage.removeItem(namaPenyimpananLocalStorage.fotoProfil);
   bersihkanErrorFotoProfil();
   tampilkanFotoProfil("");
+  tampilkanToast("Foto profil berhasil dihapus.");
 }
 
 /*
@@ -958,6 +980,7 @@ async function resetSemuaDataTugas() {
   dataAplikasi.daftarSemuaTugas = [];
   simpanDaftarTugas();
   tampilkanSemuaDataAplikasi();
+  tampilkanToast("Semua tugas berhasil dihapus.");
 }
 
 /*
@@ -1016,6 +1039,7 @@ function pasangSemuaEventListener() {
     elemenHalaman.formTambahTugas.reset();
     bersihkanErrorFormTugas();
     tampilkanSemuaDataAplikasi();
+    tampilkanToast("Tugas baru berhasil ditambahkan.");
   });
 
   elemenHalaman.daftarTugas.addEventListener("click", function (event) {
@@ -1030,11 +1054,13 @@ function pasangSemuaEventListener() {
     if (event.target.matches(".checkbox-tugas")) {
       ubahStatusSelesaiTugas(idTugas);
       tampilkanSemuaDataAplikasi();
+      tampilkanToast("Status tugas berhasil diperbarui.");
     }
 
     if (event.target.dataset.aksi === "hapus-tugas") {
       hapusTugasDariData(idTugas);
       tampilkanSemuaDataAplikasi();
+      tampilkanToast("Tugas berhasil dihapus.");
     }
   });
 
@@ -1099,9 +1125,14 @@ function pasangSemuaEventListener() {
     tambahJadwalKeData(jadwalBaru);
     tutupModalTambahJadwal();
     tampilkanKalender();
+    tampilkanToast("Jadwal baru berhasil disimpan.");
   });
 
   elemenHalaman.tombolSimpanNama.addEventListener("click", simpanNamaPengguna);
+  elemenHalaman.tombolTambahCepatMobile.addEventListener("click", function () {
+    tampilkanHalaman("tugas");
+    elemenHalaman.inputNamaTugas.focus();
+  });
   elemenHalaman.tombolUploadFoto.addEventListener("click", function () {
     elemenHalaman.inputFotoProfil.click();
   });
