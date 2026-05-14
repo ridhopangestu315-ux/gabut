@@ -1215,3 +1215,166 @@ body.mode-gelap .kotak-tanggal {
     min-width: 620px;
   }
 }
+
+/* ================================
+BOTTOM NAVIGATION MOBILE
+================================ */
+
+.bottom-navigation-mobile {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 500px;
+
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 10px;
+
+  border-radius: 24px;
+
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255,255,255,0.3);
+
+  box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+
+  z-index: 999;
+}
+
+.tombol-nav-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  border: none;
+  background: transparent;
+
+  color: #64748b;
+
+  padding: 8px 12px;
+
+  border-radius: 14px;
+
+  transition: 0.3s;
+}
+
+.tombol-nav-mobile span {
+  font-size: 20px;
+}
+
+.tombol-nav-mobile small {
+  font-size: 11px;
+}
+
+.tombol-nav-mobile.aktif {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+/* ================================
+FLOATING BUTTON
+================================ */
+
+.tombol-tambah-mobile {
+  position: fixed;
+
+  right: 20px;
+  bottom: 90px;
+
+  width: 60px;
+  height: 60px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: linear-gradient(135deg,#3b82f6,#06b6d4);
+
+  color: white;
+
+  font-size: 32px;
+  font-weight: bold;
+
+  box-shadow: 0 15px 35px rgba(59,130,246,0.4);
+
+  z-index: 999;
+
+  display: none;
+
+  transition: 0.3s;
+}
+
+.tombol-tambah-mobile:hover {
+  transform: scale(1.08);
+}
+
+/* ================================
+MOBILE RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+
+  .menu-samping {
+    display: none;
+  }
+
+  .konten-utama {
+    width: 100%;
+    padding: 18px;
+    padding-bottom: 120px;
+  }
+
+  .bottom-navigation-mobile {
+    display: flex;
+  }
+
+  .tombol-tambah-mobile {
+    display: block;
+  }
+
+  .grid-statistik {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .grid-konten,
+  .grid-pengaturan,
+  .layout-kalender {
+    grid-template-columns: 1fr;
+  }
+
+  .form-tugas {
+    grid-template-columns: 1fr;
+  }
+
+  .alat-filter-tugas {
+    grid-template-columns: 1fr;
+  }
+
+  .kepala-halaman {
+    align-items: flex-start;
+  }
+
+  .kepala-halaman h1 {
+    font-size: 24px;
+  }
+
+  .toolbar-kalender {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kotak-tanggal {
+    min-height: 90px;
+    padding: 6px;
+  }
+
+  .label-jadwal {
+    font-size: 10px;
+  }
+
+}

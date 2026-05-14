@@ -1283,3 +1283,41 @@ function jalankanAplikasi() {
 }
 
 jalankanAplikasi();
+
+/* ================================
+BOTTOM NAVIGATION MOBILE
+================================ */
+
+const semuaTombolNavMobile = document.querySelectorAll(".tombol-nav-mobile");
+
+semuaTombolNavMobile.forEach(function(tombolMobile) {
+
+  tombolMobile.addEventListener("click", function() {
+
+    const halamanTujuan = tombolMobile.dataset.halaman;
+
+    tampilkanHalaman(halamanTujuan);
+
+    semuaTombolNavMobile.forEach(function(nav) {
+      nav.classList.remove("aktif");
+    });
+
+    tombolMobile.classList.add("aktif");
+
+  });
+
+});
+
+/* ================================
+FLOATING BUTTON MOBILE
+================================ */
+
+const tombolTambahMobile = document.getElementById("tombolTambahMobile");
+
+tombolTambahMobile.addEventListener("click", function() {
+
+  tampilkanHalaman("tugas");
+
+  elemenHalaman.inputNamaTugas.focus();
+
+});
