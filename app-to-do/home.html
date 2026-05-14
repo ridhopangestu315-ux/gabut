@@ -7,95 +7,97 @@
   <link rel="stylesheet" href="home.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <span class="brand-icon">TD</span>
+  <div class="wadah-aplikasi">
+    <aside class="menu-samping">
+      <div class="identitas-aplikasi">
+        <span class="ikon-aplikasi">TD</span>
         <div>
           <h2>StudyFlow</h2>
           <p>Dashboard Tugas</p>
         </div>
       </div>
 
-      <nav class="nav-menu" aria-label="Menu utama">
-        <button class="nav-link active" type="button" data-page="dashboard">Dashboard</button>
-        <button class="nav-link" type="button" data-page="tugas">Tugas</button>
-        <button class="nav-link" type="button" data-page="kalender">Kalender</button>
-        <button class="nav-link" type="button" data-page="pengaturan">Pengaturan</button>
+      <nav class="daftar-menu" aria-label="Menu utama">
+        <button class="tombol-menu aktif" type="button" data-halaman="dashboard">Dashboard</button>
+        <button class="tombol-menu" type="button" data-halaman="tugas">Tugas</button>
+        <button class="tombol-menu" type="button" data-halaman="kalender">Kalender</button>
+        <button class="tombol-menu" type="button" data-halaman="pengaturan">Pengaturan</button>
       </nav>
     </aside>
 
-    <main class="main-content">
-      <header class="header">
+    <main class="konten-utama">
+      <header class="kepala-halaman">
         <div>
-          <p class="eyebrow">To-Do Dashboard Mahasiswa</p>
-          <h1 id="welcomeText">Selamat datang, Mahasiswa</h1>
+          <p class="teks-kecil">To-Do Dashboard Mahasiswa</p>
+          <h1 id="teksSapaan">Selamat datang, Mahasiswa</h1>
         </div>
-        <div class="profile-badge" aria-label="Profil pengguna">M</div>
+        <div id="fotoProfilHeader" class="foto-profil-header" aria-label="Profil pengguna">
+          <span id="inisialProfilHeader">M</span>
+        </div>
       </header>
 
-      <section id="dashboard" class="page active-page">
-        <div class="section-heading">
+      <section id="dashboard" class="halaman halaman-aktif">
+        <div class="judul-bagian">
           <div>
-            <p class="eyebrow">Ringkasan</p>
+            <p class="teks-kecil">Ringkasan</p>
             <h2>Progress Tugas</h2>
           </div>
         </div>
 
-        <div class="stats-grid">
-          <article class="stat-card blue">
+        <div class="grid-statistik">
+          <article class="kartu-statistik warna-biru">
             <p>Total Tugas</p>
-            <h3 id="totalTasks">0</h3>
+            <h3 id="angkaTotalTugas">0</h3>
           </article>
-          <article class="stat-card yellow">
+          <article class="kartu-statistik warna-kuning">
             <p>Belum Selesai</p>
-            <h3 id="pendingTasks">0</h3>
+            <h3 id="angkaTugasBelumSelesai">0</h3>
           </article>
-          <article class="stat-card green">
+          <article class="kartu-statistik warna-hijau">
             <p>Selesai</p>
-            <h3 id="completedTasks">0</h3>
+            <h3 id="angkaTugasSelesai">0</h3>
           </article>
-          <article class="stat-card red">
+          <article class="kartu-statistik warna-merah">
             <p>Deadline Dekat</p>
-            <h3 id="nearDeadlineTasks">0</h3>
+            <h3 id="angkaDeadlineDekat">0</h3>
           </article>
         </div>
 
-        <div class="content-grid">
+        <div class="grid-konten">
           <section class="panel">
-            <div class="panel-header">
+            <div class="kepala-panel">
               <h3>Notifikasi Deadline</h3>
             </div>
-            <div id="deadlineAlertList" class="alert-list"></div>
+            <div id="daftarNotifikasiDeadline" class="daftar-ringkas"></div>
           </section>
 
           <section class="panel">
-            <div class="panel-header">
+            <div class="kepala-panel">
               <h3>Tugas Terbaru</h3>
             </div>
-            <div id="recentTaskList" class="mini-list"></div>
+            <div id="daftarTugasTerbaru" class="daftar-ringkas"></div>
           </section>
         </div>
       </section>
 
-      <section id="tugas" class="page">
-        <div class="section-heading">
+      <section id="tugas" class="halaman">
+        <div class="judul-bagian">
           <div>
-            <p class="eyebrow">Kelola</p>
+            <p class="teks-kecil">Kelola</p>
             <h2>Daftar Tugas</h2>
           </div>
         </div>
 
-        <form id="taskForm" class="task-form" novalidate>
-          <div class="form-group">
-            <label for="taskTitleInput">Nama tugas</label>
-            <input type="text" id="taskTitleInput" placeholder="Contoh: Laporan praktikum" autocomplete="off">
-            <small id="taskTitleError" class="error-message"></small>
+        <form id="formTambahTugas" class="form-tugas" novalidate>
+          <div class="grup-form">
+            <label for="inputNamaTugas">Nama tugas</label>
+            <input type="text" id="inputNamaTugas" placeholder="Contoh: Laporan praktikum" autocomplete="off">
+            <small id="pesanErrorNamaTugas" class="pesan-error"></small>
           </div>
 
-          <div class="form-group">
-            <label for="courseInput">Mata kuliah</label>
-            <select id="courseInput">
+          <div class="grup-form">
+            <label for="pilihanMataKuliah">Mata kuliah</label>
+            <select id="pilihanMataKuliah">
               <option value="">Pilih mata kuliah</option>
               <option value="Pemrograman Web">Pemrograman Web</option>
               <option value="Analisis dan Perancangan Sistem">Analisis dan Perancangan Sistem</option>
@@ -106,95 +108,202 @@
               <option value="Praktikum PBO">Praktikum PBO</option>
               <option value="Praktikum Jaringan">Praktikum Jaringan</option>
             </select>
-            <small id="courseError" class="error-message"></small>
+            <small id="pesanErrorMataKuliah" class="pesan-error"></small>
           </div>
 
-          <div class="form-group">
-            <label for="deadlineInput">Deadline</label>
-            <input type="date" id="deadlineInput">
-            <small id="deadlineError" class="error-message"></small>
+          <div class="grup-form">
+            <label for="inputDeadlineTugas">Deadline</label>
+            <input type="date" id="inputDeadlineTugas">
+            <small id="pesanErrorDeadlineTugas" class="pesan-error"></small>
           </div>
 
-          <button class="primary-button" type="submit">Tambah Tugas</button>
+          <button class="tombol-utama" type="submit">Tambah Tugas</button>
         </form>
 
-        <div class="task-toolbar">
-          <input type="search" id="searchInput" placeholder="Cari tugas atau mata kuliah">
-          <select id="statusFilter">
-            <option value="all">Semua tugas</option>
-            <option value="pending">Belum selesai</option>
-            <option value="completed">Selesai</option>
+        <div class="alat-filter-tugas">
+          <input type="search" id="inputPencarianTugas" placeholder="Cari tugas atau mata kuliah">
+          <select id="filterStatusTugas">
+            <option value="semua">Semua tugas</option>
+            <option value="belum">Belum selesai</option>
+            <option value="selesai">Selesai</option>
           </select>
         </div>
 
-        <div id="taskList" class="task-list"></div>
+        <div id="daftarTugas" class="daftar-tugas"></div>
       </section>
 
-      <section id="kalender" class="page">
-        <div class="section-heading">
+      <section id="kalender" class="halaman">
+        <div class="judul-bagian">
           <div>
-            <p class="eyebrow">Agenda</p>
-            <h2>Kalender Deadline</h2>
+            <p class="teks-kecil">Agenda</p>
+            <h2>Kalender Mahasiswa</h2>
           </div>
+          <button id="tombolTambahJadwalCepat" class="tombol-utama" type="button">Tambah Jadwal</button>
         </div>
-        <div id="calendarList" class="calendar-list"></div>
+
+        <div class="layout-kalender">
+          <section class="kartu-kalender">
+            <div class="toolbar-kalender">
+              <div>
+                <p class="teks-kecil">Kalender Bulanan</p>
+                <h3 id="teksBulanKalender">Mei 2026</h3>
+              </div>
+              <div class="aksi-kalender">
+                <button id="tombolBulanSebelumnya" class="tombol-ikon" type="button" aria-label="Bulan sebelumnya">&lt;</button>
+                <button id="tombolHariIni" class="tombol-kedua" type="button">Hari ini</button>
+                <button id="tombolBulanBerikutnya" class="tombol-ikon" type="button" aria-label="Bulan berikutnya">&gt;</button>
+              </div>
+            </div>
+
+            <div class="filter-kalender">
+              <label for="filterKategoriJadwal">Filter kategori</label>
+              <select id="filterKategoriJadwal">
+                <option value="semua">Semua kategori</option>
+                <option value="kuliah">Kuliah</option>
+                <option value="organisasi">Organisasi</option>
+                <option value="ujian">Ujian</option>
+                <option value="pribadi">Pribadi</option>
+                <option value="deadline">Deadline tugas</option>
+              </select>
+            </div>
+
+            <div class="nama-hari-kalender" aria-hidden="true">
+              <span>Min</span>
+              <span>Sen</span>
+              <span>Sel</span>
+              <span>Rab</span>
+              <span>Kam</span>
+              <span>Jum</span>
+              <span>Sab</span>
+            </div>
+            <div id="isiKalender" class="isi-kalender"></div>
+          </section>
+
+          <aside class="sisi-agenda">
+            <section class="panel">
+              <h3>Agenda Hari Ini</h3>
+              <div id="daftarAgendaHariIni" class="daftar-agenda"></div>
+            </section>
+
+            <section class="panel">
+              <h3>Reminder Deadline</h3>
+              <div id="daftarReminderDeadline" class="daftar-agenda"></div>
+            </section>
+          </aside>
+        </div>
       </section>
 
-      <section id="pengaturan" class="page">
-        <div class="section-heading">
+      <section id="pengaturan" class="halaman">
+        <div class="judul-bagian">
           <div>
-            <p class="eyebrow">Preferensi</p>
+            <p class="teks-kecil">Preferensi</p>
             <h2>Pengaturan</h2>
           </div>
         </div>
 
-        <div class="settings-grid">
+        <div class="grid-pengaturan">
           <section class="panel">
             <h3>Profil</h3>
-            <label for="nameInput">Nama kamu</label>
-            <input type="text" id="nameInput" placeholder="Masukkan nama kamu" autocomplete="off">
-            <button id="saveNameButton" class="primary-button" type="button">Simpan Nama</button>
+            <div class="pengaturan-profil">
+              <div id="previewFotoProfil" class="preview-foto-profil" aria-label="Preview foto profil">
+                <span id="inisialPreviewProfil">M</span>
+              </div>
+              <div class="aksi-profil">
+                <input type="file" id="inputFotoProfil" accept="image/png, image/jpeg, image/jpg" hidden>
+                <button id="tombolUploadFoto" class="tombol-kedua" type="button">Upload Foto</button>
+                <button id="tombolHapusFoto" class="tombol-kecil tombol-hapus" type="button">Hapus Foto</button>
+              </div>
+            </div>
+            <small id="pesanErrorFotoProfil" class="pesan-error-foto"></small>
+            <label for="inputNamaPengguna">Nama kamu</label>
+            <input type="text" id="inputNamaPengguna" placeholder="Masukkan nama kamu" autocomplete="off">
+            <button id="tombolSimpanNama" class="tombol-utama" type="button">Simpan Nama</button>
           </section>
 
           <section class="panel">
             <h3>Tampilan</h3>
-            <label class="switch-row" for="darkModeToggle">
+            <label class="baris-switch" for="toggleModeGelap">
               <span>Aktifkan dark mode</span>
-              <input type="checkbox" id="darkModeToggle">
+              <input type="checkbox" id="toggleModeGelap">
             </label>
           </section>
 
           <section class="panel">
             <h3>Notifikasi</h3>
-            <label class="switch-row" for="notificationToggle">
+            <label class="baris-switch" for="toggleNotifikasiDeadline">
               <span>Peringatan deadline dekat</span>
-              <input type="checkbox" id="notificationToggle">
+              <input type="checkbox" id="toggleNotifikasiDeadline">
             </label>
           </section>
 
-          <section class="panel danger-panel">
+          <section class="panel panel-bahaya">
             <h3>Data</h3>
             <p>Hapus semua tugas yang tersimpan di browser ini.</p>
-            <button id="resetDataButton" class="danger-button" type="button">Hapus Semua Tugas</button>
+            <button id="tombolResetData" class="tombol-bahaya" type="button">Hapus Semua Tugas</button>
           </section>
         </div>
       </section>
     </main>
   </div>
 
-  <div id="confirmModal" class="modal-overlay" aria-hidden="true">
-    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage">
-      <div class="modal-icon" aria-hidden="true">!</div>
-      <div class="modal-content">
-        <p class="eyebrow">Konfirmasi</p>
-        <h2 id="confirmModalTitle">Hapus semua tugas?</h2>
-        <p id="confirmModalMessage">Data tugas yang sudah dihapus tidak dapat dikembalikan.</p>
+  <div id="modalKonfirmasi" class="lapisan-modal" aria-hidden="true">
+    <div class="modal-konfirmasi" role="dialog" aria-modal="true" aria-labelledby="judulModalKonfirmasi" aria-describedby="pesanModalKonfirmasi">
+      <div class="ikon-modal" aria-hidden="true">!</div>
+      <div class="isi-modal">
+        <p class="teks-kecil">Konfirmasi</p>
+        <h2 id="judulModalKonfirmasi">Hapus semua tugas?</h2>
+        <p id="pesanModalKonfirmasi">Data tugas yang sudah dihapus tidak dapat dikembalikan.</p>
       </div>
-      <div class="modal-actions">
-        <button id="cancelModalButton" class="modal-button secondary" type="button">Batal</button>
-        <button id="confirmModalButton" class="modal-button danger" type="button">Hapus</button>
+      <div class="aksi-modal">
+        <button id="tombolBatalKonfirmasi" class="tombol-modal tombol-modal-kedua" type="button">Batal</button>
+        <button id="tombolSetujuKonfirmasi" class="tombol-modal tombol-modal-bahaya" type="button">Hapus</button>
       </div>
     </div>
+  </div>
+
+  <div id="modalJadwal" class="lapisan-modal" aria-hidden="true">
+    <form id="formTambahJadwal" class="modal-jadwal" role="dialog" aria-modal="true" aria-labelledby="judulModalJadwal" novalidate>
+      <div class="isi-modal">
+        <p class="teks-kecil">Jadwal Baru</p>
+        <h2 id="judulModalJadwal">Tambah Jadwal</h2>
+        <p id="teksTanggalJadwalDipilih">Pilih tanggal pada kalender.</p>
+      </div>
+
+      <div class="grup-form">
+        <label for="inputNamaJadwal">Nama kegiatan</label>
+        <input type="text" id="inputNamaJadwal" placeholder="Contoh: Diskusi kelompok" autocomplete="off">
+        <small id="pesanErrorNamaJadwal" class="pesan-error"></small>
+      </div>
+
+      <div class="baris-form">
+        <div class="grup-form">
+          <label for="inputTanggalJadwal">Tanggal</label>
+          <input type="date" id="inputTanggalJadwal">
+          <small id="pesanErrorTanggalJadwal" class="pesan-error"></small>
+        </div>
+
+        <div class="grup-form">
+          <label for="inputJamJadwal">Jam</label>
+          <input type="time" id="inputJamJadwal">
+          <small id="pesanErrorJamJadwal" class="pesan-error"></small>
+        </div>
+      </div>
+
+      <div class="grup-form">
+        <label for="pilihanKategoriJadwal">Kategori</label>
+        <select id="pilihanKategoriJadwal">
+          <option value="kuliah">Kuliah</option>
+          <option value="organisasi">Organisasi</option>
+          <option value="ujian">Ujian</option>
+          <option value="pribadi">Pribadi</option>
+        </select>
+      </div>
+
+      <div class="aksi-modal">
+        <button id="tombolBatalJadwal" class="tombol-modal tombol-modal-kedua" type="button">Batal</button>
+        <button class="tombol-modal tombol-modal-utama" type="submit">Simpan Jadwal</button>
+      </div>
+    </form>
   </div>
 
   <script src="script.js"></script>
