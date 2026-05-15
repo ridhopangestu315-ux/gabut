@@ -1396,7 +1396,7 @@ function pasangSemuaEventListener() {
     tampilkanToast("Tugas baru berhasil ditambahkan.");
   });
 
-  elemenHalaman.daftarTugas.addEventListener("click", function (event) {
+  elemenHalaman.daftarTugas.addEventListener("click", async function (event) {
     const kartuTugas = event.target.closest(".item-tugas");
 
     if (!kartuTugas) {
@@ -1412,10 +1412,22 @@ function pasangSemuaEventListener() {
     }
 
     if (event.target.dataset.aksi === "hapus-tugas") {
-      hapusTugasDariData(idTugas);
-      tampilkanSemuaDataAplikasi();
-      tampilkanToast("Tugas berhasil dihapus.");
-    }
+
+  const userSetuju = await bukaModalKonfirmasi({
+    judul: "Hapus tugas?",
+    pesan: "Tugas ini akan dihapus permanen.",
+    teksSetuju: "Hapus",
+    teksBatal: "Batal"
+  });
+
+  if (!userSetuju) {
+    return;
+  }
+
+  hapusTugasDariData(idTugas);
+  tampilkanSemuaDataAplikasi();
+  tampilkanToast("Tugas berhasil dihapus.");
+}
   });
 
   elemenHalaman.inputPencarianTugas.addEventListener("input", function (event) {
