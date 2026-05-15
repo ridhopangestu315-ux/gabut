@@ -125,16 +125,7 @@
             <label for="pilihanMataKuliah">Mata kuliah</label>
             <select id="pilihanMataKuliah">
               <option value="">Pilih mata kuliah</option>
-                <option value="Analisis dan Perancangan Sistem">Analisis dan Perancangan Sistem</option>
-                <option value="Grafika Komputer">Grafika Komputer</option>
-                <option value="Interaksi Manusia dan Komputer">Interaksi Manusia dan Komputer</option>
-                <option value="Jaringan Komputer">Jaringan Komputer</option>
-                <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
-                <option value="Pemrograman Web">Pemrograman Web</option>
-                <option value="Praktikum Jaringan Komputer">Praktikum Jaringan Komputer</option>
-                <option value="Praktikum PBO">Praktikum PBO</option>
-                <option value="Sistem Rekayasa Berkelanjutan">Sistem Rekayasa Berkelanjutan</option>
-                <option value="Statistika Untuk Komputasi">Statistika Untuk Komputasi</option>
+              <!-- Opsi mata kuliah diisi otomatis oleh JavaScript dari localStorage -->
             </select>
             <small id="pesanErrorMataKuliah" class="pesan-error"></small>
           </div>
@@ -278,6 +269,37 @@
               <span>Peringatan deadline dekat</span>
               <input type="checkbox" id="toggleNotifikasiDeadline">
             </label>
+          </section>
+
+          <!-- ================================
+               PANEL MATA KULIAH (BARU)
+               Panel ini ada di halaman Pengaturan.
+               User bisa tambah dan hapus mata kuliah di sini.
+          ================================ -->
+          <section class="panel panel-mata-kuliah" id="panelMataKuliah">
+            <h3>Mata Kuliah</h3>
+            <p class="teks-kecil-panel">Tambahkan mata kuliah kamu. Daftar ini otomatis muncul di form tambah tugas.</p>
+
+            <!-- Form untuk menambah mata kuliah baru -->
+            <div class="form-tambah-mata-kuliah">
+              <div class="grup-form">
+                <label for="inputNamaMataKuliah">Nama mata kuliah</label>
+                <input
+                  type="text"
+                  id="inputNamaMataKuliah"
+                  placeholder="Contoh: Pemrograman Mobile"
+                  autocomplete="off"
+                  maxlength="80"
+                >
+                <small id="pesanErrorMataKuliahBaru" class="pesan-error"></small>
+              </div>
+              <button id="tombolTambahMataKuliah" class="tombol-utama" type="button">
+                Tambah
+              </button>
+            </div>
+
+            <!-- Daftar mata kuliah yang sudah ada, diisi oleh JavaScript -->
+            <div id="daftarMataKuliahPengaturan" class="daftar-mata-kuliah-pengaturan"></div>
           </section>
 
           <section class="panel panel-bahaya">

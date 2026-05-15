@@ -1137,6 +1137,157 @@ select:focus {
 }
 
 /* ================================
+   PANEL MATA KULIAH (BARU)
+   Styles untuk panel kelola mata kuliah
+   yang ada di halaman Pengaturan
+================================ */
+
+/* Teks keterangan kecil di bawah judul panel */
+.teks-kecil-panel {
+  margin-bottom: 16px;
+  color: var(--warna-teks-lembut);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Layout form tambah mata kuliah: input + tombol sejajar */
+.form-tambah-mata-kuliah {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--warna-garis);
+}
+
+/* Daftar mata kuliah: grid 1 kolom dengan jarak antar item */
+.daftar-mata-kuliah-pengaturan {
+  display: grid;
+  gap: 8px;
+}
+
+/* Tiap item mata kuliah: nama di kiri, tombol hapus di kanan */
+.item-mata-kuliah {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--warna-garis);
+  border-radius: var(--radius-kecil);
+  background: var(--warna-latar);
+
+  /* Animasi masuk saat item baru ditambahkan */
+  animation: animasiItemMasuk 0.25s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Animasi item mata kuliah baru masuk dari bawah */
+@keyframes animasiItemMasuk {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.item-mata-kuliah:hover {
+  background: var(--warna-kartu-lembut);
+}
+
+/* Nama mata kuliah di sisi kiri item */
+.nama-mata-kuliah-item {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--warna-teks);
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Tombol hapus per mata kuliah */
+.tombol-hapus-mata-kuliah {
+  flex-shrink: 0;
+  min-height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: var(--warna-bahaya);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.tombol-hapus-mata-kuliah:hover {
+  background: #fecaca;
+  transform: scale(1.04);
+}
+
+/* Animasi keluar saat item dihapus */
+.item-mata-kuliah.sedang-dihapus {
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Kotak kosong saat belum ada mata kuliah */
+.kotak-kosong-mata-kuliah {
+  padding: 24px 16px;
+  border: 2px dashed var(--warna-garis);
+  border-radius: var(--radius-kecil);
+  text-align: center;
+  color: var(--warna-teks-lembut);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ikon-kosong-mata-kuliah {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* ================================
+   DARK MODE - MATA KULIAH (BARU)
+================================ */
+body.mode-gelap .item-mata-kuliah {
+  background: var(--warna-kartu-lembut);
+  border-color: var(--warna-garis);
+}
+
+body.mode-gelap .item-mata-kuliah:hover {
+  background: #243355;
+}
+
+body.mode-gelap .tombol-hapus-mata-kuliah {
+  background: #3a1d24;
+  color: #f87171;
+}
+
+body.mode-gelap .tombol-hapus-mata-kuliah:hover {
+  background: #4a2530;
+}
+
+body.mode-gelap .kotak-kosong-mata-kuliah {
+  border-color: var(--warna-garis);
+}
+
+/* ================================
+   RESPONSIF MOBILE - MATA KULIAH (BARU)
+================================ */
+@media (max-width: 768px) {
+  .form-tambah-mata-kuliah {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================
    DARK MODE - SEMUA PERUBAHAN WARNA
 ================================ */
 body.mode-gelap {

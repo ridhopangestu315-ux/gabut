@@ -11,7 +11,9 @@ const namaPenyimpananLocalStorage = {
   fotoProfil: "studentProfilePhoto",
   namaPengguna: "studentTodoName",
   modeGelap: "studentTodoDarkMode",
-  notifikasiDeadline: "studentTodoNotification"
+  notifikasiDeadline: "studentTodoNotification",
+  // Kunci baru untuk menyimpan daftar mata kuliah buatan user
+  daftarMataKuliah: "studentTodoCourseList"
 };
 
 const aturanFotoProfil = {
@@ -22,12 +24,34 @@ const aturanFotoProfil = {
 };
 
 const daftarKategoriJadwal = {
-  kuliah:     { nama: "Kuliah",     warna: "#4285f4" },
+  kuliah: { nama: "Kuliah", warna: "#4285f4" },
   organisasi: { nama: "Organisasi", warna: "#34a853" },
-  ujian:      { nama: "Ujian",      warna: "#fbbc04" },
-  pribadi:    { nama: "Pribadi",    warna: "#a142f4" },
-  deadline:   { nama: "Deadline",   warna: "#ea4335" }
+  ujian: { nama: "Ujian", warna: "#fbbc04" },
+  pribadi: { nama: "Pribadi", warna: "#a142f4" },
+  deadline: { nama: "Deadline", warna: "#ea4335" }
 };
+
+/*
+================================
+DAFTAR MATA KULIAH DEFAULT
+================================
+Mata kuliah ini dipakai sebagai nilai awal saat user
+belum pernah mengatur mata kuliah sendiri.
+Jika user sudah punya data sendiri di localStorage,
+daftar ini tidak akan digunakan.
+*/
+const daftarMataKuliahDefault = [
+  "Analisis dan Perancangan Sistem",
+  "Grafika Komputer",
+  "Interaksi Manusia dan Komputer",
+  "Jaringan Komputer",
+  "Pendidikan Agama Islam",
+  "Pemrograman Web",
+  "Praktikum Jaringan Komputer",
+  "Praktikum PBO",
+  "Sistem Rekayasa Berkelanjutan",
+  "Statistika Untuk Komputasi"
+];
 
 /*
 ================================
@@ -37,10 +61,19 @@ Semua data yang sering dipakai dikumpulkan di satu tempat.
 Dengan cara ini, kita mudah tahu isi aplikasi saat sedang debug.
 */
 const dataAplikasi = {
-  daftarSemuaTugas:    ambilDataDariLocalStorage(namaPenyimpananLocalStorage.tugas, []),
-  daftarSemuaJadwal:   ambilDataDariLocalStorage(namaPenyimpananLocalStorage.jadwal, []),
+  daftarSemuaTugas: ambilDataDariLocalStorage(namaPenyimpananLocalStorage.tugas, []),
+  daftarSemuaJadwal: ambilDataDariLocalStorage(namaPenyimpananLocalStorage.jadwal, []),
+
+  /*
+    Daftar mata kuliah diambil dari localStorage.
+    Kalau belum ada (pertama kali buka), pakai daftar default di atas.
+    Setelah diambil, data ini disimpan ulang ke localStorage
+    supaya tersedia di sesi berikutnya.
+  */
+  daftarMataKuliah: ambilDataDariLocalStorage(namaPenyimpananLocalStorage.daftarMataKuliah, null),
+
   kataKunciPencarianTugas: "",
-  filterStatusTugas:   "semua",
+  filterStatusTugas: "semua",
   filterKategoriJadwal: "semua",
   halamanYangSedangDibuka: "dashboard",
   bulanKalenderYangDibuka: new Date(),
@@ -54,87 +87,85 @@ const dataAplikasi = {
 AMBIL ELEMENT HTML
 ================================
 Semua element HTML diambil sekali di awal.
-Tujuannya agar tidak berulang-ulang memakai document.getElementById.
+Tujuannya agar tidak berulang-ulang memakai document.getElementById di banyak tempat.
 */
 const elemenHalaman = {
   body: document.body,
   semuaTombolMenu: document.querySelectorAll(".tombol-menu"),
-  semuaHalaman:    document.querySelectorAll(".halaman"),
+  semuaHalaman: document.querySelectorAll(".halaman"),
 
-  teksSapaan:         document.getElementById("teksSapaan"),
-  fotoProfilHeader:   document.getElementById("fotoProfilHeader"),
+  teksSapaan: document.getElementById("teksSapaan"),
+  fotoProfilHeader: document.getElementById("fotoProfilHeader"),
   inisialProfilHeader: document.getElementById("inisialProfilHeader"),
-  previewFotoProfil:  document.getElementById("previewFotoProfil"),
+  previewFotoProfil: document.getElementById("previewFotoProfil"),
   inisialPreviewProfil: document.getElementById("inisialPreviewProfil"),
-  inputFotoProfil:    document.getElementById("inputFotoProfil"),
-  tombolUploadFoto:   document.getElementById("tombolUploadFoto"),
-  tombolHapusFoto:    document.getElementById("tombolHapusFoto"),
+  inputFotoProfil: document.getElementById("inputFotoProfil"),
+  tombolUploadFoto: document.getElementById("tombolUploadFoto"),
+  tombolHapusFoto: document.getElementById("tombolHapusFoto"),
   pesanErrorFotoProfil: document.getElementById("pesanErrorFotoProfil"),
 
-  angkaTotalTugas:          document.getElementById("angkaTotalTugas"),
-  angkaTugasBelumSelesai:   document.getElementById("angkaTugasBelumSelesai"),
-  angkaTugasSelesai:        document.getElementById("angkaTugasSelesai"),
-  angkaDeadlineDekat:       document.getElementById("angkaDeadlineDekat"),
+  angkaTotalTugas: document.getElementById("angkaTotalTugas"),
+  angkaTugasBelumSelesai: document.getElementById("angkaTugasBelumSelesai"),
+  angkaTugasSelesai: document.getElementById("angkaTugasSelesai"),
+  angkaDeadlineDekat: document.getElementById("angkaDeadlineDekat"),
   daftarNotifikasiDeadline: document.getElementById("daftarNotifikasiDeadline"),
-  daftarTugasTerbaru:       document.getElementById("daftarTugasTerbaru"),
+  daftarTugasTerbaru: document.getElementById("daftarTugasTerbaru"),
 
-  formTambahTugas:         document.getElementById("formTambahTugas"),
-  inputNamaTugas:          document.getElementById("inputNamaTugas"),
-  pilihanMataKuliah:       document.getElementById("pilihanMataKuliah"),
-  inputDeadlineTugas:      document.getElementById("inputDeadlineTugas"),
-  pesanErrorNamaTugas:     document.getElementById("pesanErrorNamaTugas"),
-  pesanErrorMataKuliah:    document.getElementById("pesanErrorMataKuliah"),
+  formTambahTugas: document.getElementById("formTambahTugas"),
+  inputNamaTugas: document.getElementById("inputNamaTugas"),
+  pilihanMataKuliah: document.getElementById("pilihanMataKuliah"),
+  inputDeadlineTugas: document.getElementById("inputDeadlineTugas"),
+  pesanErrorNamaTugas: document.getElementById("pesanErrorNamaTugas"),
+  pesanErrorMataKuliah: document.getElementById("pesanErrorMataKuliah"),
   pesanErrorDeadlineTugas: document.getElementById("pesanErrorDeadlineTugas"),
-  inputPencarianTugas:     document.getElementById("inputPencarianTugas"),
-  filterStatusTugas:       document.getElementById("filterStatusTugas"),
-  daftarTugas:             document.getElementById("daftarTugas"),
+  inputPencarianTugas: document.getElementById("inputPencarianTugas"),
+  filterStatusTugas: document.getElementById("filterStatusTugas"),
+  daftarTugas: document.getElementById("daftarTugas"),
 
-  teksBulanKalender:       document.getElementById("teksBulanKalender"),
-  tombolBulanSebelumnya:   document.getElementById("tombolBulanSebelumnya"),
-  tombolBulanBerikutnya:   document.getElementById("tombolBulanBerikutnya"),
-  tombolHariIni:           document.getElementById("tombolHariIni"),
+  teksBulanKalender: document.getElementById("teksBulanKalender"),
+  tombolBulanSebelumnya: document.getElementById("tombolBulanSebelumnya"),
+  tombolBulanBerikutnya: document.getElementById("tombolBulanBerikutnya"),
+  tombolHariIni: document.getElementById("tombolHariIni"),
   tombolTambahJadwalCepat: document.getElementById("tombolTambahJadwalCepat"),
-  filterKategoriJadwal:    document.getElementById("filterKategoriJadwal"),
-  isiKalender:             document.getElementById("isiKalender"),
-  daftarAgendaHariIni:     document.getElementById("daftarAgendaHariIni"),
-  daftarReminderDeadline:  document.getElementById("daftarReminderDeadline"),
+  filterKategoriJadwal: document.getElementById("filterKategoriJadwal"),
+  isiKalender: document.getElementById("isiKalender"),
+  daftarAgendaHariIni: document.getElementById("daftarAgendaHariIni"),
+  daftarReminderDeadline: document.getElementById("daftarReminderDeadline"),
 
-  inputNamaPengguna:          document.getElementById("inputNamaPengguna"),
-  tombolSimpanNama:           document.getElementById("tombolSimpanNama"),
-  toggleModeGelap:            document.getElementById("toggleModeGelap"),
-  toggleNotifikasiDeadline:   document.getElementById("toggleNotifikasiDeadline"),
-  tombolResetData:            document.getElementById("tombolResetData"),
+  inputNamaPengguna: document.getElementById("inputNamaPengguna"),
+  tombolSimpanNama: document.getElementById("tombolSimpanNama"),
+  toggleModeGelap: document.getElementById("toggleModeGelap"),
+  toggleNotifikasiDeadline: document.getElementById("toggleNotifikasiDeadline"),
+  tombolResetData: document.getElementById("tombolResetData"),
 
-  modalKonfirmasi:        document.getElementById("modalKonfirmasi"),
-  judulModalKonfirmasi:   document.getElementById("judulModalKonfirmasi"),
-  pesanModalKonfirmasi:   document.getElementById("pesanModalKonfirmasi"),
-  tombolBatalKonfirmasi:  document.getElementById("tombolBatalKonfirmasi"),
+  // Elemen baru untuk kelola mata kuliah di halaman Pengaturan
+  inputNamaMataKuliah: document.getElementById("inputNamaMataKuliah"),
+  tombolTambahMataKuliah: document.getElementById("tombolTambahMataKuliah"),
+  pesanErrorMataKuliahBaru: document.getElementById("pesanErrorMataKuliahBaru"),
+  daftarMataKuliahPengaturan: document.getElementById("daftarMataKuliahPengaturan"),
+
+  modalKonfirmasi: document.getElementById("modalKonfirmasi"),
+  judulModalKonfirmasi: document.getElementById("judulModalKonfirmasi"),
+  pesanModalKonfirmasi: document.getElementById("pesanModalKonfirmasi"),
+  tombolBatalKonfirmasi: document.getElementById("tombolBatalKonfirmasi"),
   tombolSetujuKonfirmasi: document.getElementById("tombolSetujuKonfirmasi"),
 
-  modalJadwal:              document.getElementById("modalJadwal"),
-  formTambahJadwal:         document.getElementById("formTambahJadwal"),
+  modalJadwal: document.getElementById("modalJadwal"),
+  formTambahJadwal: document.getElementById("formTambahJadwal"),
   teksTanggalJadwalDipilih: document.getElementById("teksTanggalJadwalDipilih"),
-  inputNamaJadwal:          document.getElementById("inputNamaJadwal"),
-  inputTanggalJadwal:       document.getElementById("inputTanggalJadwal"),
-  inputJamJadwal:           document.getElementById("inputJamJadwal"),
-  pilihanKategoriJadwal:    document.getElementById("pilihanKategoriJadwal"),
-  pesanErrorNamaJadwal:     document.getElementById("pesanErrorNamaJadwal"),
-  pesanErrorTanggalJadwal:  document.getElementById("pesanErrorTanggalJadwal"),
-  pesanErrorJamJadwal:      document.getElementById("pesanErrorJamJadwal"),
-  tombolBatalJadwal:        document.getElementById("tombolBatalJadwal"),
-
-  // Element untuk modal detail tanggal (fitur baru)
-  modalDetailTanggal:           document.getElementById("modalDetailTanggal"),
-  judulModalDetail:             document.getElementById("judulModalDetail"),
-  daftarJadwalDetailTanggal:    document.getElementById("daftarJadwalDetailTanggal"),
-  tombolTutupDetailTanggal:     document.getElementById("tombolTutupDetailTanggal"),
-  tombolTambahJadwalDariDetail: document.getElementById("tombolTambahJadwalDariDetail"),
+  inputNamaJadwal: document.getElementById("inputNamaJadwal"),
+  inputTanggalJadwal: document.getElementById("inputTanggalJadwal"),
+  inputJamJadwal: document.getElementById("inputJamJadwal"),
+  pilihanKategoriJadwal: document.getElementById("pilihanKategoriJadwal"),
+  pesanErrorNamaJadwal: document.getElementById("pesanErrorNamaJadwal"),
+  pesanErrorTanggalJadwal: document.getElementById("pesanErrorTanggalJadwal"),
+  pesanErrorJamJadwal: document.getElementById("pesanErrorJamJadwal"),
+  tombolBatalJadwal: document.getElementById("tombolBatalJadwal"),
 
   tombolTambahCepatMobile: document.getElementById("tombolTambahCepatMobile"),
-  wadahToast:              document.getElementById("wadahToast")
+  wadahToast: document.getElementById("wadahToast")
 };
 
-// Variabel untuk menyimpan fungsi callback modal konfirmasi
 let fungsiJawabanModalKonfirmasi = null;
 
 /*
@@ -176,15 +207,20 @@ FUNGSI BANTUAN TANGGAL
 Tanggal dibuat dalam format yyyy-mm-dd agar mudah dibandingkan.
 */
 function ubahTanggalMenjadiKode(tanggal) {
-  const tahun  = tanggal.getFullYear();
-  const bulan  = String(tanggal.getMonth() + 1).padStart(2, "0");
-  const hari   = String(tanggal.getDate()).padStart(2, "0");
+  const tahun = tanggal.getFullYear();
+  const bulan = String(tanggal.getMonth() + 1).padStart(2, "0");
+  const hari = String(tanggal.getDate()).padStart(2, "0");
+
   return `${tahun}-${bulan}-${hari}`;
 }
 
 function ubahKodeMenjadiTanggal(kodeTanggal) {
-  const bagian = kodeTanggal.split("-");
-  return new Date(Number(bagian[0]), Number(bagian[1]) - 1, Number(bagian[2]));
+  const bagianTanggal = kodeTanggal.split("-");
+  const tahun = Number(bagianTanggal[0]);
+  const bulan = Number(bagianTanggal[1]);
+  const hari = Number(bagianTanggal[2]);
+
+  return new Date(tahun, bulan - 1, hari);
 }
 
 function cekApakahTanggalSama(tanggalPertama, tanggalKedua) {
@@ -213,9 +249,17 @@ function hitungSisaHari(kodeTanggalDeadline) {
 function buatTeksSisaDeadline(kodeTanggalDeadline) {
   const sisaHari = hitungSisaHari(kodeTanggalDeadline);
 
-  if (sisaHari < 0)  return "Terlewat";
-  if (sisaHari === 0) return "Hari ini";
-  if (sisaHari === 1) return "Besok";
+  if (sisaHari < 0) {
+    return "Terlewat";
+  }
+
+  if (sisaHari === 0) {
+    return "Hari ini";
+  }
+
+  if (sisaHari === 1) {
+    return "Besok";
+  }
 
   return `${sisaHari} hari lagi`;
 }
@@ -229,11 +273,11 @@ Ini mencegah HTML dari input user ikut terbaca sebagai kode.
 */
 function amankanTeksUntukHtml(teks) {
   return String(teks)
-    .replaceAll("&",  "&amp;")
-    .replaceAll("<",  "&lt;")
-    .replaceAll(">",  "&gt;")
-    .replaceAll('"',  "&quot;")
-    .replaceAll("'",  "&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function buatTampilanKosong(pesan) {
@@ -242,6 +286,7 @@ function buatTampilanKosong(pesan) {
 
 function tampilkanToast(pesan) {
   const toastBaru = document.createElement("div");
+
   toastBaru.className = "toast";
   toastBaru.textContent = pesan;
   elemenHalaman.wadahToast.appendChild(toastBaru);
@@ -264,11 +309,11 @@ Bagian ini hanya mengurus data tugas: membuat, menambah, menghapus, dan mengubah
 function buatDataTugas(namaTugas, mataKuliah, deadline) {
   return {
     id: Date.now().toString(),
-    namaTugas:   namaTugas,
-    mataKuliah:  mataKuliah,
-    deadline:    deadline,
+    namaTugas: namaTugas,
+    mataKuliah: mataKuliah,
+    deadline: deadline,
     sudahSelesai: false,
-    dibuatPada:  new Date().toISOString()
+    dibuatPada: new Date().toISOString()
   };
 }
 
@@ -281,6 +326,7 @@ function hapusTugasDariData(idTugas) {
   dataAplikasi.daftarSemuaTugas = dataAplikasi.daftarSemuaTugas.filter(function (tugas) {
     return tugas.id !== idTugas;
   });
+
   simpanDaftarTugas();
 }
 
@@ -289,15 +335,17 @@ function ubahStatusSelesaiTugas(idTugas) {
     if (tugas.id !== idTugas) {
       return tugas;
     }
+
     return {
-      id:           tugas.id,
-      namaTugas:    tugas.namaTugas,
-      mataKuliah:   tugas.mataKuliah,
-      deadline:     tugas.deadline,
+      id: tugas.id,
+      namaTugas: tugas.namaTugas,
+      mataKuliah: tugas.mataKuliah,
+      deadline: tugas.deadline,
       sudahSelesai: !tugas.sudahSelesai,
-      dibuatPada:   tugas.dibuatPada
+      dibuatPada: tugas.dibuatPada
     };
   });
+
   simpanDaftarTugas();
 }
 
@@ -312,16 +360,16 @@ function ambilTugasSesuaiFilter() {
   const kataKunci = dataAplikasi.kataKunciPencarianTugas.toLowerCase();
 
   return dataAplikasi.daftarSemuaTugas.filter(function (tugas) {
-    const cocokKataKunci =
+    const cocokDenganKataKunci =
       tugas.namaTugas.toLowerCase().includes(kataKunci) ||
       tugas.mataKuliah.toLowerCase().includes(kataKunci);
 
-    const cocokStatus =
+    const cocokDenganStatus =
       dataAplikasi.filterStatusTugas === "semua" ||
       (dataAplikasi.filterStatusTugas === "selesai" && tugas.sudahSelesai) ||
-      (dataAplikasi.filterStatusTugas === "belum"   && !tugas.sudahSelesai);
+      (dataAplikasi.filterStatusTugas === "belum" && !tugas.sudahSelesai);
 
-    return cocokKataKunci && cocokStatus;
+    return cocokDenganKataKunci && cocokDenganStatus;
   });
 }
 
@@ -349,46 +397,35 @@ function bersihkanErrorFormTugas() {
 function validasiFormTugas() {
   bersihkanErrorFormTugas();
 
-  const namaTugas  = elemenHalaman.inputNamaTugas.value.trim();
+  const namaTugas = elemenHalaman.inputNamaTugas.value.trim();
   const mataKuliah = elemenHalaman.pilihanMataKuliah.value;
-  const deadline   = elemenHalaman.inputDeadlineTugas.value;
+  const deadline = elemenHalaman.inputDeadlineTugas.value;
   let formValid = true;
 
   if (namaTugas.length < 3) {
-    tampilkanErrorInput(
-      elemenHalaman.inputNamaTugas,
-      elemenHalaman.pesanErrorNamaTugas,
-      "Nama tugas minimal 3 karakter."
-    );
+    tampilkanErrorInput(elemenHalaman.inputNamaTugas, elemenHalaman.pesanErrorNamaTugas, "Nama tugas minimal 3 karakter.");
     formValid = false;
   }
 
   if (mataKuliah === "") {
-    tampilkanErrorInput(
-      elemenHalaman.pilihanMataKuliah,
-      elemenHalaman.pesanErrorMataKuliah,
-      "Pilih mata kuliah terlebih dahulu."
-    );
+    tampilkanErrorInput(elemenHalaman.pilihanMataKuliah, elemenHalaman.pesanErrorMataKuliah, "Pilih mata kuliah terlebih dahulu.");
     formValid = false;
   }
 
   if (deadline === "") {
-    tampilkanErrorInput(
-      elemenHalaman.inputDeadlineTugas,
-      elemenHalaman.pesanErrorDeadlineTugas,
-      "Pilih tanggal deadline."
-    );
+    tampilkanErrorInput(elemenHalaman.inputDeadlineTugas, elemenHalaman.pesanErrorDeadlineTugas, "Pilih tanggal deadline.");
     formValid = false;
   } else if (hitungSisaHari(deadline) < 0) {
-    tampilkanErrorInput(
-      elemenHalaman.inputDeadlineTugas,
-      elemenHalaman.pesanErrorDeadlineTugas,
-      "Deadline tidak boleh tanggal yang sudah lewat."
-    );
+    tampilkanErrorInput(elemenHalaman.inputDeadlineTugas, elemenHalaman.pesanErrorDeadlineTugas, "Deadline tidak boleh tanggal yang sudah lewat.");
     formValid = false;
   }
 
-  return { formValid, namaTugas, mataKuliah, deadline };
+  return {
+    formValid: formValid,
+    namaTugas: namaTugas,
+    mataKuliah: mataKuliah,
+    deadline: deadline
+  };
 }
 
 /*
@@ -399,12 +436,12 @@ Jadwal manual dan deadline tugas digabung agar tampil dalam kalender yang sama.
 */
 function buatDataJadwal(namaJadwal, tanggalJadwal, jamJadwal, kategoriJadwal) {
   return {
-    id:            Date.now().toString(),
-    namaJadwal:    namaJadwal,
+    id: Date.now().toString(),
+    namaJadwal: namaJadwal,
     tanggalJadwal: tanggalJadwal,
-    jamJadwal:     jamJadwal,
+    jamJadwal: jamJadwal,
     kategoriJadwal: kategoriJadwal,
-    dibuatPada:    new Date().toISOString()
+    dibuatPada: new Date().toISOString()
   };
 }
 
@@ -413,60 +450,49 @@ function tambahJadwalKeData(dataJadwalBaru) {
   simpanDaftarJadwal();
 }
 
-// Fungsi baru: hapus jadwal berdasarkan id
-function hapusJadwalDariData(idJadwal) {
-  dataAplikasi.daftarSemuaJadwal = dataAplikasi.daftarSemuaJadwal.filter(function (jadwal) {
-    return jadwal.id !== idJadwal;
-  });
-  simpanDaftarJadwal();
-}
-
 function ambilSemuaItemKalender() {
-  // Ubah jadwal manual menjadi format yang seragam
   const daftarJadwalManual = dataAplikasi.daftarSemuaJadwal.map(function (jadwal) {
     return {
-      id:       jadwal.id,
-      judul:    jadwal.namaJadwal,
-      tanggal:  jadwal.tanggalJadwal,
-      jam:      jadwal.jamJadwal,
+      id: jadwal.id,
+      judul: jadwal.namaJadwal,
+      tanggal: jadwal.tanggalJadwal,
+      jam: jadwal.jamJadwal,
       kategori: jadwal.kategoriJadwal,
-      tipe:     "jadwal",
-      warna:    daftarKategoriJadwal[jadwal.kategoriJadwal].warna
+      tipe: "jadwal",
+      warna: daftarKategoriJadwal[jadwal.kategoriJadwal].warna
     };
   });
 
-  // Ubah deadline tugas menjadi format yang seragam juga
   const daftarDeadlineTugas = dataAplikasi.daftarSemuaTugas.map(function (tugas) {
     return {
-      id:           tugas.id,
-      judul:        tugas.namaTugas,
-      tanggal:      tugas.deadline,
-      jam:          "23:59",
-      kategori:     "deadline",
-      tipe:         "deadline",
-      mataKuliah:   tugas.mataKuliah,
+      id: tugas.id,
+      judul: tugas.namaTugas,
+      tanggal: tugas.deadline,
+      jam: "23:59",
+      kategori: "deadline",
+      tipe: "deadline",
+      mataKuliah: tugas.mataKuliah,
       sudahSelesai: tugas.sudahSelesai,
-      warna:        daftarKategoriJadwal.deadline.warna
+      warna: daftarKategoriJadwal.deadline.warna
     };
   });
 
-  // Gabungkan keduanya
   const daftarGabungan = daftarJadwalManual.concat(daftarDeadlineTugas);
 
-  // Filter berdasarkan kategori yang dipilih
-  return daftarGabungan.filter(function (item) {
-    return dataAplikasi.filterKategoriJadwal === "semua" ||
-           item.kategori === dataAplikasi.filterKategoriJadwal;
+  return daftarGabungan.filter(function (itemKalender) {
+    return dataAplikasi.filterKategoriJadwal === "semua" || itemKalender.kategori === dataAplikasi.filterKategoriJadwal;
   });
 }
 
 function ambilItemKalenderBerdasarkanTanggal(kodeTanggal) {
-  return ambilSemuaItemKalender()
-    .filter(function (item) {
-      return item.tanggal === kodeTanggal;
+  const daftarItemKalender = ambilSemuaItemKalender();
+
+  return daftarItemKalender
+    .filter(function (itemKalender) {
+      return itemKalender.tanggal === kodeTanggal;
     })
-    .sort(function (a, b) {
-      return a.jam.localeCompare(b.jam);
+    .sort(function (itemPertama, itemKedua) {
+      return itemPertama.jam.localeCompare(itemKedua.jam);
     });
 }
 
@@ -489,40 +515,34 @@ function bersihkanErrorFormJadwal() {
 function validasiFormJadwal() {
   bersihkanErrorFormJadwal();
 
-  const namaJadwal    = elemenHalaman.inputNamaJadwal.value.trim();
+  const namaJadwal = elemenHalaman.inputNamaJadwal.value.trim();
   const tanggalJadwal = elemenHalaman.inputTanggalJadwal.value;
-  const jamJadwal     = elemenHalaman.inputJamJadwal.value;
+  const jamJadwal = elemenHalaman.inputJamJadwal.value;
   const kategoriJadwal = elemenHalaman.pilihanKategoriJadwal.value;
   let formValid = true;
 
   if (namaJadwal.length < 3) {
-    tampilkanErrorInput(
-      elemenHalaman.inputNamaJadwal,
-      elemenHalaman.pesanErrorNamaJadwal,
-      "Nama kegiatan minimal 3 karakter."
-    );
+    tampilkanErrorInput(elemenHalaman.inputNamaJadwal, elemenHalaman.pesanErrorNamaJadwal, "Nama kegiatan minimal 3 karakter.");
     formValid = false;
   }
 
   if (tanggalJadwal === "") {
-    tampilkanErrorInput(
-      elemenHalaman.inputTanggalJadwal,
-      elemenHalaman.pesanErrorTanggalJadwal,
-      "Tanggal wajib diisi."
-    );
+    tampilkanErrorInput(elemenHalaman.inputTanggalJadwal, elemenHalaman.pesanErrorTanggalJadwal, "Tanggal wajib diisi.");
     formValid = false;
   }
 
   if (jamJadwal === "") {
-    tampilkanErrorInput(
-      elemenHalaman.inputJamJadwal,
-      elemenHalaman.pesanErrorJamJadwal,
-      "Jam wajib diisi."
-    );
+    tampilkanErrorInput(elemenHalaman.inputJamJadwal, elemenHalaman.pesanErrorJamJadwal, "Jam wajib diisi.");
     formValid = false;
   }
 
-  return { formValid, namaJadwal, tanggalJadwal, jamJadwal, kategoriJadwal };
+  return {
+    formValid: formValid,
+    namaJadwal: namaJadwal,
+    tanggalJadwal: tanggalJadwal,
+    jamJadwal: jamJadwal,
+    kategoriJadwal: kategoriJadwal
+  };
 }
 
 /*
@@ -532,15 +552,17 @@ FUNGSI TAMPILKAN DASHBOARD
 Dashboard membaca data tugas, lalu menampilkan angka statistik.
 */
 function tampilkanDashboard() {
-  const totalTugas       = dataAplikasi.daftarSemuaTugas.length;
-  const totalSelesai     = dataAplikasi.daftarSemuaTugas.filter(t => t.sudahSelesai).length;
-  const totalBelumSelesai = totalTugas - totalSelesai;
+  const totalTugas = dataAplikasi.daftarSemuaTugas.length;
+  const totalTugasSelesai = dataAplikasi.daftarSemuaTugas.filter(function (tugas) {
+    return tugas.sudahSelesai;
+  }).length;
+  const totalTugasBelumSelesai = totalTugas - totalTugasSelesai;
   const daftarDeadlineDekat = ambilTugasYangDeadlineDekat();
 
-  elemenHalaman.angkaTotalTugas.textContent        = totalTugas;
-  elemenHalaman.angkaTugasSelesai.textContent       = totalSelesai;
-  elemenHalaman.angkaTugasBelumSelesai.textContent  = totalBelumSelesai;
-  elemenHalaman.angkaDeadlineDekat.textContent      = daftarDeadlineDekat.length;
+  elemenHalaman.angkaTotalTugas.textContent = totalTugas;
+  elemenHalaman.angkaTugasSelesai.textContent = totalTugasSelesai;
+  elemenHalaman.angkaTugasBelumSelesai.textContent = totalTugasBelumSelesai;
+  elemenHalaman.angkaDeadlineDekat.textContent = daftarDeadlineDekat.length;
 
   tampilkanNotifikasiDeadline(daftarDeadlineDekat);
   tampilkanTugasTerbaru();
@@ -571,16 +593,16 @@ function tampilkanNotifikasiDeadline(daftarDeadlineDekat) {
 }
 
 function tampilkanTugasTerbaru() {
-  const daftarTerbaru = dataAplikasi.daftarSemuaTugas.slice(0, 4);
+  const daftarTugasTerbaru = dataAplikasi.daftarSemuaTugas.slice(0, 4);
 
-  if (daftarTerbaru.length === 0) {
+  if (daftarTugasTerbaru.length === 0) {
     elemenHalaman.daftarTugasTerbaru.innerHTML = buatTampilanKosong("Belum ada tugas. Tambahkan tugas pertamamu.");
     return;
   }
 
-  elemenHalaman.daftarTugasTerbaru.innerHTML = daftarTerbaru.map(function (tugas) {
+  elemenHalaman.daftarTugasTerbaru.innerHTML = daftarTugasTerbaru.map(function (tugas) {
     const kelasStatus = tugas.sudahSelesai ? "label-sukses" : "label-peringatan";
-    const teksStatus  = tugas.sudahSelesai ? "Selesai" : buatTeksSisaDeadline(tugas.deadline);
+    const teksStatus = tugas.sudahSelesai ? "Selesai" : buatTeksSisaDeadline(tugas.deadline);
 
     return `
       <div class="item-kalender">
@@ -601,23 +623,23 @@ FUNGSI TAMPILKAN DATA TUGAS
 Bagian ini mengubah array tugas menjadi tampilan HTML.
 */
 function tampilkanDaftarTugas() {
-  const daftarYangDitampilkan = ambilTugasSesuaiFilter();
+  const daftarTugasYangDitampilkan = ambilTugasSesuaiFilter();
 
-  if (daftarYangDitampilkan.length === 0) {
+  if (daftarTugasYangDitampilkan.length === 0) {
     elemenHalaman.daftarTugas.innerHTML = buatTampilanKosong("Tidak ada tugas yang sesuai.");
     return;
   }
 
-  elemenHalaman.daftarTugas.innerHTML = daftarYangDitampilkan.map(function (tugas) {
-    const kelasSelesai    = tugas.sudahSelesai ? "tugas-selesai" : "";
-    const kelasStatus     = tugas.sudahSelesai ? "label-sukses" : "label-peringatan";
-    const teksStatus      = tugas.sudahSelesai ? "Selesai" : buatTeksSisaDeadline(tugas.deadline);
-    const checkboxCentang = tugas.sudahSelesai ? "checked" : "";
+  elemenHalaman.daftarTugas.innerHTML = daftarTugasYangDitampilkan.map(function (tugas) {
+    const kelasTugasSelesai = tugas.sudahSelesai ? "tugas-selesai" : "";
+    const kelasStatus = tugas.sudahSelesai ? "label-sukses" : "label-peringatan";
+    const teksStatus = tugas.sudahSelesai ? "Selesai" : buatTeksSisaDeadline(tugas.deadline);
+    const checkboxTercentang = tugas.sudahSelesai ? "checked" : "";
 
     return `
-      <article class="item-tugas ${kelasSelesai}" data-id-tugas="${tugas.id}">
+      <article class="item-tugas ${kelasTugasSelesai}" data-id-tugas="${tugas.id}">
         <div class="bagian-utama-tugas">
-          <input class="checkbox-tugas" type="checkbox" ${checkboxCentang} aria-label="Tandai selesai">
+          <input class="checkbox-tugas" type="checkbox" ${checkboxTercentang} aria-label="Tandai selesai">
           <div>
             <p class="judul-tugas">${amankanTeksUntukHtml(tugas.namaTugas)}</p>
             <div class="info-tugas">
@@ -628,9 +650,7 @@ function tampilkanDaftarTugas() {
           </div>
         </div>
         <div class="aksi-tugas">
-          <button class="tombol-kecil tombol-hapus" type="button" data-aksi="hapus-tugas">
-            Hapus
-          </button>
+          <button class="tombol-kecil tombol-hapus" type="button" data-aksi="hapus-tugas">Hapus</button>
         </div>
       </article>
     `;
@@ -658,53 +678,49 @@ function tampilkanJudulBulanKalender() {
 }
 
 function tampilkanKotakTanggalKalender() {
-  const tahunAktif  = dataAplikasi.bulanKalenderYangDibuka.getFullYear();
-  const bulanAktif  = dataAplikasi.bulanKalenderYangDibuka.getMonth();
-  const tanggalAwal = new Date(tahunAktif, bulanAktif, 1);
+  const tahunAktif = dataAplikasi.bulanKalenderYangDibuka.getFullYear();
+  const bulanAktif = dataAplikasi.bulanKalenderYangDibuka.getMonth();
+  const tanggalPertamaBulan = new Date(tahunAktif, bulanAktif, 1);
+  const tanggalAwalKalender = new Date(tanggalPertamaBulan);
 
-  // Mundur ke hari Minggu terdekat sebelum tanggal 1
-  tanggalAwal.setDate(tanggalAwal.getDate() - tanggalAwal.getDay());
+  tanggalAwalKalender.setDate(tanggalAwalKalender.getDate() - tanggalPertamaBulan.getDay());
 
-  let htmlKalender = "";
+  let isiHtmlKalender = "";
 
-  // Buat 42 kotak (6 minggu x 7 hari)
-  for (let i = 0; i < 42; i++) {
-    const tanggalKotak = new Date(tanggalAwal);
-    tanggalKotak.setDate(tanggalAwal.getDate() + i);
-    htmlKalender += buatHtmlKotakTanggal(tanggalKotak, bulanAktif);
+  for (let urutanTanggal = 0; urutanTanggal < 42; urutanTanggal++) {
+    const tanggalUntukKotak = new Date(tanggalAwalKalender);
+    tanggalUntukKotak.setDate(tanggalAwalKalender.getDate() + urutanTanggal);
+
+    isiHtmlKalender += buatHtmlKotakTanggal(tanggalUntukKotak, bulanAktif);
   }
 
-  elemenHalaman.isiKalender.innerHTML = htmlKalender;
+  elemenHalaman.isiKalender.innerHTML = isiHtmlKalender;
 }
 
-function buatHtmlKotakTanggal(tanggalKotak, bulanAktif) {
-  const kodeTanggal         = ubahTanggalMenjadiKode(tanggalKotak);
-  const daftarItemHariIni   = ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
-  const itemYangDitampilkan = daftarItemHariIni.slice(0, 3);
-  const sisaItemTersembunyi = daftarItemHariIni.length - itemYangDitampilkan.length;
-  const kelasHariIni        = cekApakahTanggalSama(tanggalKotak, new Date()) ? "tanggal-hari-ini" : "";
-  const kelasLuarBulan      = tanggalKotak.getMonth() !== bulanAktif ? "tanggal-luar-bulan" : "";
+function buatHtmlKotakTanggal(tanggalUntukKotak, bulanAktif) {
+  const kodeTanggal = ubahTanggalMenjadiKode(tanggalUntukKotak);
+  const daftarItemTanggalIni = ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
+  const daftarItemYangDitampilkan = daftarItemTanggalIni.slice(0, 3);
+  const jumlahItemTersembunyi = daftarItemTanggalIni.length - daftarItemYangDitampilkan.length;
+  const kelasHariIni = cekApakahTanggalSama(tanggalUntukKotak, new Date()) ? "tanggal-hari-ini" : "";
+  const kelasLuarBulan = tanggalUntukKotak.getMonth() !== bulanAktif ? "tanggal-luar-bulan" : "";
 
   return `
-    <button class="kotak-tanggal ${kelasHariIni} ${kelasLuarBulan}"
-            type="button"
-            data-tanggal="${kodeTanggal}">
+    <button class="kotak-tanggal ${kelasHariIni} ${kelasLuarBulan}" type="button" data-tanggal="${kodeTanggal}">
       <span class="kepala-tanggal">
-        <span class="angka-tanggal">${tanggalKotak.getDate()}</span>
-        ${daftarItemHariIni.length > 0 ? '<span class="titik-jadwal"></span>' : ""}
+        <span class="angka-tanggal">${tanggalUntukKotak.getDate()}</span>
+        ${daftarItemTanggalIni.length > 0 ? '<span class="titik-jadwal"></span>' : ""}
       </span>
       <span class="daftar-jadwal-di-tanggal">
-        ${itemYangDitampilkan.map(buatHtmlLabelJadwal).join("")}
-        ${sisaItemTersembunyi > 0
-          ? `<span class="jumlah-jadwal-lain">+${sisaItemTersembunyi} lainnya</span>`
-          : ""}
+        ${daftarItemYangDitampilkan.map(buatHtmlLabelJadwal).join("")}
+        ${jumlahItemTersembunyi > 0 ? `<span class="jumlah-jadwal-lain">+${jumlahItemTersembunyi} jadwal lain</span>` : ""}
       </span>
     </button>
   `;
 }
 
 function buatHtmlLabelJadwal(itemKalender) {
-  const teksJam       = itemKalender.tipe === "deadline" ? "DL" : itemKalender.jam;
+  const teksJam = itemKalender.tipe === "deadline" ? "DL" : itemKalender.jam;
   const kelasDeadline = itemKalender.tipe === "deadline" ? "label-deadline" : "";
 
   return `
@@ -715,15 +731,15 @@ function buatHtmlLabelJadwal(itemKalender) {
 }
 
 function tampilkanAgendaHariIni() {
-  const kodeHariIni    = ubahTanggalMenjadiKode(new Date());
-  const agendaHariIni  = ambilItemKalenderBerdasarkanTanggal(kodeHariIni);
+  const kodeHariIni = ubahTanggalMenjadiKode(new Date());
+  const daftarAgendaHariIni = ambilItemKalenderBerdasarkanTanggal(kodeHariIni);
 
-  if (agendaHariIni.length === 0) {
+  if (daftarAgendaHariIni.length === 0) {
     elemenHalaman.daftarAgendaHariIni.innerHTML = buatTampilanKosong("Tidak ada agenda hari ini.");
     return;
   }
 
-  elemenHalaman.daftarAgendaHariIni.innerHTML = agendaHariIni.map(buatHtmlItemAgenda).join("");
+  elemenHalaman.daftarAgendaHariIni.innerHTML = daftarAgendaHariIni.map(buatHtmlItemAgenda).join("");
 }
 
 function tampilkanReminderDeadline() {
@@ -736,18 +752,18 @@ function tampilkanReminderDeadline() {
 
   elemenHalaman.daftarReminderDeadline.innerHTML = daftarDeadlineDekat.map(function (tugas) {
     const itemDeadline = {
-      judul:      tugas.namaTugas,
-      tanggal:    tugas.deadline,
-      jam:        "23:59",
-      kategori:   "deadline",
-      tipe:       "deadline",
+      judul: tugas.namaTugas,
+      tanggal: tugas.deadline,
+      jam: "23:59",
+      kategori: "deadline",
+      tipe: "deadline",
       mataKuliah: tugas.mataKuliah
     };
+
     return buatHtmlItemAgenda(itemDeadline);
   }).join("");
 }
 
-// Buat tampilan satu item agenda
 function buatHtmlItemAgenda(itemKalender) {
   const dataKategori = daftarKategoriJadwal[itemKalender.kategori];
   let teksKeterangan = `${dataKategori.nama} - ${itemKalender.jam}`;
@@ -758,10 +774,8 @@ function buatHtmlItemAgenda(itemKalender) {
 
   return `
     <article class="item-agenda kategori-${itemKalender.kategori}">
-      <div class="info-agenda">
-        <strong>${amankanTeksUntukHtml(itemKalender.judul)}</strong>
-        <p>${formatTanggalIndonesia(itemKalender.tanggal)} - ${amankanTeksUntukHtml(teksKeterangan)}</p>
-      </div>
+      <strong>${amankanTeksUntukHtml(itemKalender.judul)}</strong>
+      <p>${formatTanggalIndonesia(itemKalender.tanggal)} - ${amankanTeksUntukHtml(teksKeterangan)}</p>
     </article>
   `;
 }
@@ -783,6 +797,7 @@ function tampilkanSemuaDataAplikasi() {
 ================================
 FUNGSI HALAMAN DAN PENGATURAN
 ================================
+Bagian ini mengatur pindah halaman, nama pengguna, dan mode gelap.
 */
 function tampilkanHalaman(namaHalaman) {
   dataAplikasi.halamanYangSedangDibuka = namaHalaman;
@@ -791,8 +806,8 @@ function tampilkanHalaman(namaHalaman) {
     halaman.classList.toggle("halaman-aktif", halaman.id === namaHalaman);
   });
 
-  elemenHalaman.semuaTombolMenu.forEach(function (tombol) {
-    tombol.classList.toggle("aktif", tombol.dataset.halaman === namaHalaman);
+  elemenHalaman.semuaTombolMenu.forEach(function (tombolMenu) {
+    tombolMenu.classList.toggle("aktif", tombolMenu.dataset.halaman === namaHalaman);
   });
 }
 
@@ -816,7 +831,8 @@ function tampilkanNamaPengguna(namaPengguna) {
 
 function tampilkanInisialProfil(namaPengguna) {
   const inisial = namaPengguna ? namaPengguna.trim().charAt(0).toUpperCase() : "M";
-  elemenHalaman.inisialProfilHeader.textContent  = inisial;
+
+  elemenHalaman.inisialProfilHeader.textContent = inisial;
   elemenHalaman.inisialPreviewProfil.textContent = inisial;
 }
 
@@ -829,23 +845,23 @@ function terapkanModeGelap() {
 ================================
 FUNGSI FOTO PROFIL
 ================================
-File dibaca dengan FileReader, ditampilkan sebagai preview,
-lalu diresize dengan canvas, lalu disimpan ke localStorage sebagai teks base64.
+File dibaca dengan FileReader, ditampilkan sebagai preview, lalu diresize dengan canvas.
+Hasil resize disimpan ke localStorage sebagai teks base64.
 */
 function tampilkanFotoProfil(dataFoto) {
-  const fotoTersimpan   = dataFoto || localStorage.getItem(namaPenyimpananLocalStorage.fotoProfil);
-  const inisialHeader   = elemenHalaman.inisialProfilHeader.textContent || "M";
-  const inisialPreview  = elemenHalaman.inisialPreviewProfil.textContent || "M";
+  const fotoTersimpan = dataFoto || localStorage.getItem(namaPenyimpananLocalStorage.fotoProfil);
+  const teksInisialHeader = elemenHalaman.inisialProfilHeader.textContent || "M";
+  const teksInisialPreview = elemenHalaman.inisialPreviewProfil.textContent || "M";
 
   if (!fotoTersimpan) {
-    elemenHalaman.fotoProfilHeader.innerHTML  = `<span id="inisialProfilHeader">${inisialHeader}</span>`;
-    elemenHalaman.previewFotoProfil.innerHTML = `<span id="inisialPreviewProfil">${inisialPreview}</span>`;
-    elemenHalaman.inisialProfilHeader  = document.getElementById("inisialProfilHeader");
+    elemenHalaman.fotoProfilHeader.innerHTML = `<span id="inisialProfilHeader">${teksInisialHeader}</span>`;
+    elemenHalaman.previewFotoProfil.innerHTML = `<span id="inisialPreviewProfil">${teksInisialPreview}</span>`;
+    elemenHalaman.inisialProfilHeader = document.getElementById("inisialProfilHeader");
     elemenHalaman.inisialPreviewProfil = document.getElementById("inisialPreviewProfil");
     return;
   }
 
-  elemenHalaman.fotoProfilHeader.innerHTML  = `<img src="${fotoTersimpan}" alt="Foto profil">`;
+  elemenHalaman.fotoProfilHeader.innerHTML = `<img src="${fotoTersimpan}" alt="Foto profil">`;
   elemenHalaman.previewFotoProfil.innerHTML = `<img src="${fotoTersimpan}" alt="Preview foto profil">`;
 }
 
@@ -860,7 +876,9 @@ function bersihkanErrorFotoProfil() {
 }
 
 function validasiFotoProfil(fileFoto) {
-  if (!fileFoto) return "Pilih file gambar terlebih dahulu.";
+  if (!fileFoto) {
+    return "Pilih file gambar terlebih dahulu.";
+  }
 
   if (!aturanFotoProfil.tipeFileYangDiizinkan.includes(fileFoto.type)) {
     return "Format foto harus JPG, JPEG, atau PNG.";
@@ -875,10 +893,17 @@ function validasiFotoProfil(fileFoto) {
 
 function bacaFileFotoSebagaiDataUrl(fileFoto) {
   return new Promise(function (berhasil, gagal) {
-    const pembaca = new FileReader();
-    pembaca.onload = function () { berhasil(pembaca.result); };
-    pembaca.onerror = function () { gagal(new Error("Gagal membaca file gambar.")); };
-    pembaca.readAsDataURL(fileFoto);
+    const pembacaFile = new FileReader();
+
+    pembacaFile.onload = function () {
+      berhasil(pembacaFile.result);
+    };
+
+    pembacaFile.onerror = function () {
+      gagal(new Error("Gagal membaca file gambar."));
+    };
+
+    pembacaFile.readAsDataURL(fileFoto);
   });
 }
 
@@ -887,29 +912,32 @@ function perkecilUkuranFoto(dataUrlFoto) {
     const gambar = new Image();
 
     gambar.onload = function () {
-      const kanvas    = document.createElement("canvas");
-      const konteks   = kanvas.getContext("2d");
-      const skala     = Math.min(
-        aturanFotoProfil.lebarMaksimal  / gambar.width,
+      const kanvas = document.createElement("canvas");
+      const alatGambar = kanvas.getContext("2d");
+      const skalaGambar = Math.min(
+        aturanFotoProfil.lebarMaksimal / gambar.width,
         aturanFotoProfil.tinggiMaksimal / gambar.height,
         1
       );
 
-      kanvas.width  = Math.round(gambar.width  * skala);
-      kanvas.height = Math.round(gambar.height * skala);
-      konteks.drawImage(gambar, 0, 0, kanvas.width, kanvas.height);
+      kanvas.width = Math.round(gambar.width * skalaGambar);
+      kanvas.height = Math.round(gambar.height * skalaGambar);
+      alatGambar.drawImage(gambar, 0, 0, kanvas.width, kanvas.height);
 
       berhasil(kanvas.toDataURL("image/jpeg", 0.82));
     };
 
-    gambar.onerror = function () { gagal(new Error("File gambar tidak bisa diproses.")); };
+    gambar.onerror = function () {
+      gagal(new Error("File gambar tidak bisa diproses."));
+    };
+
     gambar.src = dataUrlFoto;
   });
 }
 
 async function prosesUploadFotoProfil(event) {
-  const fileFoto    = event.target.files[0];
-  const pesanError  = validasiFotoProfil(fileFoto);
+  const fileFoto = event.target.files[0];
+  const pesanError = validasiFotoProfil(fileFoto);
 
   bersihkanErrorFotoProfil();
 
@@ -920,12 +948,12 @@ async function prosesUploadFotoProfil(event) {
   }
 
   try {
-    const fotoAsli   = await bacaFileFotoSebagaiDataUrl(fileFoto);
+    const fotoAsli = await bacaFileFotoSebagaiDataUrl(fileFoto);
     tampilkanFotoProfil(fotoAsli);
 
-    const fotoKecil  = await perkecilUkuranFoto(fotoAsli);
-    localStorage.setItem(namaPenyimpananLocalStorage.fotoProfil, fotoKecil);
-    tampilkanFotoProfil(fotoKecil);
+    const fotoYangSudahDiperkecil = await perkecilUkuranFoto(fotoAsli);
+    localStorage.setItem(namaPenyimpananLocalStorage.fotoProfil, fotoYangSudahDiperkecil);
+    tampilkanFotoProfil(fotoYangSudahDiperkecil);
     tampilkanToast("Foto profil berhasil diperbarui.");
   } catch (error) {
     tampilkanErrorFotoProfil(error.message);
@@ -948,17 +976,17 @@ FUNGSI MODAL KONFIRMASI
 Modal ini menggantikan popup konfirmasi bawaan browser.
 */
 function bukaModalKonfirmasi(pengaturanModal) {
-  elemenHalaman.judulModalKonfirmasi.textContent  = pengaturanModal.judul;
-  elemenHalaman.pesanModalKonfirmasi.textContent  = pengaturanModal.pesan;
+  elemenHalaman.judulModalKonfirmasi.textContent = pengaturanModal.judul;
+  elemenHalaman.pesanModalKonfirmasi.textContent = pengaturanModal.pesan;
   elemenHalaman.tombolSetujuKonfirmasi.textContent = pengaturanModal.teksSetuju || "Hapus";
-  elemenHalaman.tombolBatalKonfirmasi.textContent  = pengaturanModal.teksBatal  || "Batal";
+  elemenHalaman.tombolBatalKonfirmasi.textContent = pengaturanModal.teksBatal || "Batal";
 
   elemenHalaman.modalKonfirmasi.classList.add("tampil");
   elemenHalaman.modalKonfirmasi.setAttribute("aria-hidden", "false");
   elemenHalaman.tombolSetujuKonfirmasi.focus();
 
-  return new Promise(function (jawab) {
-    fungsiJawabanModalKonfirmasi = jawab;
+  return new Promise(function (jawabModal) {
+    fungsiJawabanModalKonfirmasi = jawabModal;
   });
 }
 
@@ -977,14 +1005,16 @@ function tutupModalKonfirmasi(jawabanUser) {
 }
 
 async function resetSemuaDataTugas() {
-  const userSetuju = await bukaModalKonfirmasi({
+  const userSetujuMenghapus = await bukaModalKonfirmasi({
     judul: "Hapus semua tugas?",
     pesan: "Semua tugas yang tersimpan di browser ini akan dihapus permanen.",
     teksSetuju: "Hapus",
-    teksBatal:  "Batal"
+    teksBatal: "Batal"
   });
 
-  if (!userSetuju) return;
+  if (!userSetujuMenghapus) {
+    return;
+  }
 
   dataAplikasi.daftarSemuaTugas = [];
   simpanDaftarTugas();
@@ -996,7 +1026,7 @@ async function resetSemuaDataTugas() {
 ================================
 FUNGSI MODAL JADWAL
 ================================
-Modal ini muncul ketika user klik tombol Tambah Jadwal.
+Modal ini muncul ketika user klik tanggal kalender atau tombol Tambah Jadwal.
 */
 function bukaModalTambahJadwal(kodeTanggal) {
   dataAplikasi.tanggalJadwalYangDipilih = kodeTanggal || ubahTanggalMenjadiKode(new Date());
@@ -1005,14 +1035,16 @@ function bukaModalTambahJadwal(kodeTanggal) {
   bersihkanErrorFormJadwal();
   elemenHalaman.inputTanggalJadwal.value = dataAplikasi.tanggalJadwalYangDipilih;
   elemenHalaman.pilihanKategoriJadwal.value = "kuliah";
-  elemenHalaman.teksTanggalJadwalDipilih.textContent = `Tanggal: ${formatTanggalIndonesia(dataAplikasi.tanggalJadwalYangDipilih)}`;
+  elemenHalaman.teksTanggalJadwalDipilih.textContent = `Tanggal dipilih: ${formatTanggalIndonesia(dataAplikasi.tanggalJadwalYangDipilih)}`;
   elemenHalaman.modalJadwal.classList.add("tampil");
   elemenHalaman.modalJadwal.setAttribute("aria-hidden", "false");
   elemenHalaman.inputNamaJadwal.focus();
 }
 
 function tutupModalTambahJadwal() {
-  if (!elemenHalaman.modalJadwal.classList.contains("tampil")) return;
+  if (!elemenHalaman.modalJadwal.classList.contains("tampil")) {
+    return;
+  }
 
   elemenHalaman.modalJadwal.classList.remove("tampil");
   elemenHalaman.modalJadwal.setAttribute("aria-hidden", "true");
@@ -1021,84 +1053,317 @@ function tutupModalTambahJadwal() {
 
 /*
 ================================
-FUNGSI MODAL DETAIL TANGGAL (FITUR BARU)
+FUNGSI MATA KULIAH
 ================================
-Modal ini muncul saat user klik tanggal di kalender.
-Isinya daftar jadwal di tanggal itu + tombol hapus tiap jadwal.
+Bagian ini mengurus semua hal terkait mata kuliah:
+- Menyimpan dan membaca dari localStorage
+- Menambah mata kuliah baru
+- Menghapus mata kuliah
+- Memperbarui dropdown di form tugas
+- Menampilkan daftar di halaman Pengaturan
+
+ALUR DATA:
+1. Data mata kuliah disimpan sebagai array string di localStorage
+   Contoh: ["Pemrograman Web", "Jaringan Komputer"]
+
+2. Setiap kali data berubah (tambah/hapus), array diperbarui
+   lalu disimpan ulang ke localStorage
+
+3. Dropdown di form tugas langsung diperbarui agar sinkron
+================================
 */
-function bukaModalDetailTanggal(kodeTanggal) {
-  // Simpan tanggal yang dipilih biar tombol tambah jadwal tahu tanggalnya
-  dataAplikasi.tanggalJadwalYangDipilih = kodeTanggal;
 
-  // Update judul modal
-  elemenHalaman.judulModalDetail.textContent = formatTanggalIndonesia(kodeTanggal);
-
-  // Tampilkan daftar jadwal di tanggal ini
-  tampilkanDaftarJadwalDiModal(kodeTanggal);
-
-  elemenHalaman.modalDetailTanggal.classList.add("tampil");
-  elemenHalaman.modalDetailTanggal.setAttribute("aria-hidden", "false");
+/*
+  simpanDaftarMataKuliah()
+  -------------------------
+  Menyimpan array daftarMataKuliah ke localStorage.
+  Dipanggil setiap kali ada perubahan (tambah atau hapus).
+*/
+function simpanDaftarMataKuliah() {
+  simpanDataKeLocalStorage(
+    namaPenyimpananLocalStorage.daftarMataKuliah,
+    dataAplikasi.daftarMataKuliah
+  );
 }
 
-function tutupModalDetailTanggal() {
-  if (!elemenHalaman.modalDetailTanggal.classList.contains("tampil")) return;
+/*
+  inisialisasiDaftarMataKuliah()
+  --------------------------------
+  Dipanggil sekali saat aplikasi pertama kali dibuka.
+  Tugasnya: cek apakah sudah ada data mata kuliah di localStorage.
+  - Kalau belum ada (null): pakai daftar default dan langsung simpan
+  - Kalau sudah ada: gunakan data yang tersimpan
+*/
+function inisialisasiDaftarMataKuliah() {
+  // Kalau daftarMataKuliah masih null, berarti user belum pernah atur mata kuliah
+  if (dataAplikasi.daftarMataKuliah === null) {
+    // Salin daftar default ke dalam data aplikasi
+    dataAplikasi.daftarMataKuliah = daftarMataKuliahDefault.slice();
 
-  elemenHalaman.modalDetailTanggal.classList.remove("tampil");
-  elemenHalaman.modalDetailTanggal.setAttribute("aria-hidden", "true");
+    // Simpan ke localStorage agar tersedia di kunjungan berikutnya
+    simpanDaftarMataKuliah();
+  }
 }
 
-// Tampilkan daftar jadwal di modal detail, lengkap dengan tombol hapus
-function tampilkanDaftarJadwalDiModal(kodeTanggal) {
-  const daftarItemHariIni = ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
+/*
+  cekApakahMataKuliahSudahAda(namaMataKuliah)
+  ---------------------------------------------
+  Mengecek apakah nama mata kuliah sudah ada di daftar.
+  Perbandingan tidak peduli huruf besar/kecil agar tidak duplikat.
+  Mengembalikan true jika sudah ada, false jika belum.
+*/
+function cekApakahMataKuliahSudahAda(namaMataKuliah) {
+  var namaDalamHurufKecil = namaMataKuliah.toLowerCase().trim();
 
-  if (daftarItemHariIni.length === 0) {
-    elemenHalaman.daftarJadwalDetailTanggal.innerHTML = buatTampilanKosong("Belum ada jadwal di tanggal ini.");
+  return dataAplikasi.daftarMataKuliah.some(function (mataKuliahYangAda) {
+    return mataKuliahYangAda.toLowerCase().trim() === namaDalamHurufKecil;
+  });
+}
+
+/*
+  validasiInputMataKuliah(namaInputMataKuliah)
+  ---------------------------------------------
+  Memeriksa apakah nama mata kuliah yang dimasukkan user valid.
+  Aturan validasi:
+  - Tidak boleh kosong
+  - Minimal 3 karakter
+  - Tidak boleh sudah ada di daftar (duplikat)
+  Mengembalikan string pesan error, atau string kosong jika valid.
+*/
+function validasiInputMataKuliah(namaInputMataKuliah) {
+  var namaBersih = namaInputMataKuliah.trim();
+
+  if (namaBersih === "") {
+    return "Nama mata kuliah tidak boleh kosong.";
+  }
+
+  if (namaBersih.length < 3) {
+    return "Nama mata kuliah minimal 3 karakter.";
+  }
+
+  if (cekApakahMataKuliahSudahAda(namaBersih)) {
+    return "Mata kuliah ini sudah ada di daftar.";
+  }
+
+  return ""; // Kosong berarti valid, tidak ada error
+}
+
+/*
+  tambahMataKuliahBaru()
+  -----------------------
+  Menambahkan satu mata kuliah baru ke dalam daftar.
+  Dipanggil saat user klik tombol Tambah.
+  Urutan:
+  1. Ambil nilai dari input
+  2. Validasi
+  3. Kalau valid: tambah ke array, simpan, perbarui tampilan
+  4. Kalau tidak valid: tampilkan pesan error
+*/
+function tambahMataKuliahBaru() {
+  var namaInputMataKuliah = elemenHalaman.inputNamaMataKuliah.value;
+  var namaBersih = namaInputMataKuliah.trim();
+
+  // Hapus pesan error lama sebelum validasi ulang
+  elemenHalaman.pesanErrorMataKuliahBaru.textContent = "";
+  elemenHalaman.inputNamaMataKuliah.classList.remove("input-error");
+
+  // Jalankan validasi
+  var pesanError = validasiInputMataKuliah(namaBersih);
+
+  // Kalau ada error, tampilkan dan berhenti di sini
+  if (pesanError !== "") {
+    elemenHalaman.pesanErrorMataKuliahBaru.textContent = pesanError;
+    elemenHalaman.inputNamaMataKuliah.classList.add("input-error");
+    elemenHalaman.inputNamaMataKuliah.focus();
     return;
   }
 
-  elemenHalaman.daftarJadwalDetailTanggal.innerHTML = daftarItemHariIni.map(function (item) {
-    const kategoriInfo = daftarKategoriJadwal[item.kategori];
-    const teksJam      = item.tipe === "deadline" ? "Deadline 23:59" : item.jam;
+  // Tambahkan ke array, lalu urutkan alfabetis
+  dataAplikasi.daftarMataKuliah.push(namaBersih);
+  dataAplikasi.daftarMataKuliah.sort();
 
-    // Kalau tipe deadline, tidak ada tombol hapus jadwal (hapusnya lewat halaman tugas)
-    const tombolHapus = item.tipe === "jadwal"
-      ? `<button class="tombol-hapus-jadwal" type="button" data-id-jadwal="${item.id}" title="Hapus jadwal">✕</button>`
-      : `<span style="font-size:11px;color:var(--warna-teks-lembut);flex-shrink:0;">Tugas</span>`;
+  // Simpan perubahan ke localStorage
+  simpanDaftarMataKuliah();
 
-    return `
-      <article class="item-agenda kategori-${item.kategori}">
-        <div class="info-agenda">
-          <strong>${amankanTeksUntukHtml(item.judul)}</strong>
-          <p>${kategoriInfo.nama} · ${teksJam}</p>
-        </div>
-        ${tombolHapus}
-      </article>
-    `;
-  }).join("");
+  // Bersihkan input agar siap untuk input berikutnya
+  elemenHalaman.inputNamaMataKuliah.value = "";
+  elemenHalaman.inputNamaMataKuliah.classList.remove("input-error");
+
+  // Perbarui semua tampilan yang berkaitan
+  tampilkanDaftarMataKuliahDiPengaturan();
+  perbaruiDropdownMataKuliah();
+
+  // Beri feedback ke user
+  tampilkanToast("Mata kuliah berhasil ditambahkan.");
+  elemenHalaman.inputNamaMataKuliah.focus();
 }
 
-// Hapus satu jadwal setelah minta konfirmasi
-async function hapusJadwalDenganKonfirmasi(idJadwal, kodeTanggal) {
-  const userSetuju = await bukaModalKonfirmasi({
-    judul: "Hapus jadwal ini?",
-    pesan: "Jadwal yang dihapus tidak bisa dikembalikan.",
+/*
+  hapusMataKuliah(namaMataKuliah)
+  --------------------------------
+  Menghapus satu mata kuliah dari daftar berdasarkan namanya.
+  Sebelum menghapus, akan muncul konfirmasi modal.
+  Kalau user setuju, data dihapus dan tampilan diperbarui.
+*/
+async function hapusMataKuliah(namaMataKuliah) {
+  // Tanyakan konfirmasi ke user sebelum menghapus
+  var userSetujuMenghapus = await bukaModalKonfirmasi({
+    judul: "Hapus mata kuliah?",
+    pesan: '"' + namaMataKuliah + '" akan dihapus dari daftar. Tugas yang sudah ada tidak terpengaruh.',
     teksSetuju: "Hapus",
-    teksBatal:  "Batal"
+    teksBatal: "Batal"
   });
 
-  if (!userSetuju) return;
-
-  hapusJadwalDariData(idJadwal);
-  tampilkanSemuaDataAplikasi();
-  tampilkanToast("Jadwal berhasil dihapus.");
-
-  // Refresh tampilan di modal, atau tutup kalau sudah kosong
-  const sisa = ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
-  if (sisa.length === 0) {
-    tutupModalDetailTanggal();
-  } else {
-    tampilkanDaftarJadwalDiModal(kodeTanggal);
+  // Kalau user pilih Batal, langsung berhenti
+  if (!userSetujuMenghapus) {
+    return;
   }
+
+  // Cari elemen item di DOM untuk animasi keluar
+  var semuaItemMataKuliah = elemenHalaman.daftarMataKuliahPengaturan.querySelectorAll(".item-mata-kuliah");
+  var elemenYangAkanDihapus = null;
+
+  semuaItemMataKuliah.forEach(function (itemElemen) {
+    var tombolHapus = itemElemen.querySelector(".tombol-hapus-mata-kuliah");
+    if (tombolHapus && tombolHapus.dataset.namaMataKuliah === namaMataKuliah) {
+      elemenYangAkanDihapus = itemElemen;
+    }
+  });
+
+  // Mainkan animasi keluar dulu sebelum benar-benar dihapus dari DOM
+  if (elemenYangAkanDihapus) {
+    elemenYangAkanDihapus.classList.add("sedang-dihapus");
+
+    // Tunggu animasi selesai (220ms sesuai CSS transition)
+    await new Promise(function (selesai) {
+      setTimeout(selesai, 220);
+    });
+  }
+
+  // Hapus dari array: filter hanya yang namanya BUKAN nama yang dihapus
+  dataAplikasi.daftarMataKuliah = dataAplikasi.daftarMataKuliah.filter(function (namaMataKuliahYangAda) {
+    return namaMataKuliahYangAda !== namaMataKuliah;
+  });
+
+  // Simpan perubahan ke localStorage
+  simpanDaftarMataKuliah();
+
+  // Perbarui tampilan daftar dan dropdown
+  tampilkanDaftarMataKuliahDiPengaturan();
+  perbaruiDropdownMataKuliah();
+
+  // Beri feedback ke user
+  tampilkanToast("Mata kuliah berhasil dihapus.");
+}
+
+/*
+  perbaruiDropdownMataKuliah()
+  ------------------------------
+  Memperbarui isi <select> dropdown mata kuliah di form tugas.
+  Fungsi ini dipanggil setiap kali daftar mata kuliah berubah.
+
+  CARA KERJA:
+  1. Simpan dulu pilihan yang sedang aktif
+  2. Kosongkan semua opsi
+  3. Tambahkan opsi default ("Pilih mata kuliah")
+  4. Loop seluruh daftar → buat <option> baru tiap mata kuliah
+  5. Kembalikan pilihan aktif kalau masih ada di daftar
+*/
+function perbaruiDropdownMataKuliah() {
+  var elemenSelect = elemenHalaman.pilihanMataKuliah;
+
+  // Simpan pilihan yang sedang aktif agar tidak direset
+  var nilaiYangSedangDipilih = elemenSelect.value;
+
+  // Hapus semua opsi yang ada dulu
+  elemenSelect.innerHTML = "";
+
+  // Tambahkan opsi default (kosong) sebagai pilihan pertama
+  var opsiDefault = document.createElement("option");
+  opsiDefault.value = "";
+  opsiDefault.textContent = "Pilih mata kuliah";
+  elemenSelect.appendChild(opsiDefault);
+
+  // Tambahkan tiap mata kuliah dari daftar sebagai opsi baru
+  dataAplikasi.daftarMataKuliah.forEach(function (namaMataKuliah) {
+    var opsiMataKuliah = document.createElement("option");
+    opsiMataKuliah.value = namaMataKuliah;
+    opsiMataKuliah.textContent = namaMataKuliah;
+    elemenSelect.appendChild(opsiMataKuliah);
+  });
+
+  // Pulihkan pilihan yang tadi aktif kalau masih ada di daftar
+  if (nilaiYangSedangDipilih && cekApakahMataKuliahSudahAda(nilaiYangSedangDipilih)) {
+    elemenSelect.value = nilaiYangSedangDipilih;
+  }
+}
+
+/*
+  tampilkanDaftarMataKuliahDiPengaturan()
+  -----------------------------------------
+  Merender ulang daftar mata kuliah di halaman Pengaturan.
+  Tiap item punya nama di kiri dan tombol Hapus di kanan.
+
+  CARA KERJA:
+  1. Cek apakah daftar kosong → tampilkan empty state jika iya
+  2. Kalau tidak kosong: buat HTML untuk tiap mata kuliah
+  3. Pasang event listener pada wadah dengan event delegation
+*/
+function tampilkanDaftarMataKuliahDiPengaturan() {
+  var wadahDaftar = elemenHalaman.daftarMataKuliahPengaturan;
+
+  // Kalau daftar kosong, tampilkan pesan empty state
+  if (dataAplikasi.daftarMataKuliah.length === 0) {
+    wadahDaftar.innerHTML = `
+      <div class="kotak-kosong-mata-kuliah">
+        <span class="ikon-kosong-mata-kuliah">📚</span>
+        Belum ada mata kuliah.<br>
+        Tambahkan mata kuliah pertamamu di atas.
+      </div>
+    `;
+    return;
+  }
+
+  // Buat HTML untuk tiap mata kuliah dalam daftar
+  var htmlDaftarMataKuliah = dataAplikasi.daftarMataKuliah.map(function (namaMataKuliah) {
+    // Nama diamankan agar karakter khusus tidak merusak HTML
+    var namaMataKuliahAman = amankanTeksUntukHtml(namaMataKuliah);
+
+    return `
+      <div class="item-mata-kuliah">
+        <span class="nama-mata-kuliah-item">${namaMataKuliahAman}</span>
+        <button
+          class="tombol-hapus-mata-kuliah"
+          type="button"
+          data-nama-mata-kuliah="${namaMataKuliahAman}"
+          aria-label="Hapus ${namaMataKuliahAman}"
+        >
+          Hapus
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  wadahDaftar.innerHTML = htmlDaftarMataKuliah;
+
+  /*
+    Pasang event listener dengan event delegation.
+    Satu listener di wadah, bukan satu listener per tombol.
+    Lebih efisien dan tidak perlu dipasang ulang tiap render.
+  */
+  wadahDaftar.addEventListener("click", function tanganiKlikDaftarMataKuliah(event) {
+    var tombolYangDiklik = event.target.closest(".tombol-hapus-mata-kuliah");
+
+    if (!tombolYangDiklik) {
+      return; // Bukan tombol hapus, abaikan
+    }
+
+    var namaYangAkanDihapus = tombolYangDiklik.dataset.namaMataKuliah;
+    hapusMataKuliah(namaYangAkanDihapus);
+
+    // Hapus listener ini setelah digunakan agar tidak menumpuk saat render ulang
+    wadahDaftar.removeEventListener("click", tanganiKlikDaftarMataKuliah);
+  });
 }
 
 /*
@@ -1108,27 +1373,22 @@ EVENT LISTENER
 Bagian ini menghubungkan aksi user dengan function di atas.
 */
 function pasangSemuaEventListener() {
-
-  // Navigasi menu sidebar
-  elemenHalaman.semuaTombolMenu.forEach(function (tombol) {
-    tombol.addEventListener("click", function () {
-      tampilkanHalaman(tombol.dataset.halaman);
+  elemenHalaman.semuaTombolMenu.forEach(function (tombolMenu) {
+    tombolMenu.addEventListener("click", function () {
+      tampilkanHalaman(tombolMenu.dataset.halaman);
     });
   });
 
-  // Submit form tambah tugas
   elemenHalaman.formTambahTugas.addEventListener("submit", function (event) {
     event.preventDefault();
 
     const hasilValidasi = validasiFormTugas();
-    if (!hasilValidasi.formValid) return;
 
-    const tugasBaru = buatDataTugas(
-      hasilValidasi.namaTugas,
-      hasilValidasi.mataKuliah,
-      hasilValidasi.deadline
-    );
+    if (!hasilValidasi.formValid) {
+      return;
+    }
 
+    const tugasBaru = buatDataTugas(hasilValidasi.namaTugas, hasilValidasi.mataKuliah, hasilValidasi.deadline);
     tambahTugasKeData(tugasBaru);
     elemenHalaman.formTambahTugas.reset();
     bersihkanErrorFormTugas();
@@ -1136,10 +1396,12 @@ function pasangSemuaEventListener() {
     tampilkanToast("Tugas baru berhasil ditambahkan.");
   });
 
-  // Klik di daftar tugas (centang atau hapus)
   elemenHalaman.daftarTugas.addEventListener("click", function (event) {
     const kartuTugas = event.target.closest(".item-tugas");
-    if (!kartuTugas) return;
+
+    if (!kartuTugas) {
+      return;
+    }
 
     const idTugas = kartuTugas.dataset.idTugas;
 
@@ -1156,19 +1418,16 @@ function pasangSemuaEventListener() {
     }
   });
 
-  // Pencarian tugas
   elemenHalaman.inputPencarianTugas.addEventListener("input", function (event) {
     dataAplikasi.kataKunciPencarianTugas = event.target.value.trim();
     tampilkanDaftarTugas();
   });
 
-  // Filter status tugas
   elemenHalaman.filterStatusTugas.addEventListener("change", function (event) {
     dataAplikasi.filterStatusTugas = event.target.value;
     tampilkanDaftarTugas();
   });
 
-  // Navigasi bulan kalender
   elemenHalaman.tombolBulanSebelumnya.addEventListener("click", function () {
     pindahBulanKalender(-1);
   });
@@ -1182,59 +1441,33 @@ function pasangSemuaEventListener() {
     tampilkanKalender();
   });
 
-  // Tombol tambah jadwal di header kalender
   elemenHalaman.tombolTambahJadwalCepat.addEventListener("click", function () {
     bukaModalTambahJadwal(ubahTanggalMenjadiKode(new Date()));
   });
 
-  // Filter kategori kalender
   elemenHalaman.filterKategoriJadwal.addEventListener("change", function (event) {
     dataAplikasi.filterKategoriJadwal = event.target.value;
     tampilkanKalender();
   });
 
-  // Klik kotak tanggal di kalender
-  // Sekarang membuka modal detail (bukan langsung modal tambah jadwal)
   elemenHalaman.isiKalender.addEventListener("click", function (event) {
     const kotakTanggal = event.target.closest(".kotak-tanggal");
-    if (!kotakTanggal) return;
 
-    bukaModalDetailTanggal(kotakTanggal.dataset.tanggal);
-  });
-
-  // Tombol tutup di modal detail tanggal
-  elemenHalaman.tombolTutupDetailTanggal.addEventListener("click", tutupModalDetailTanggal);
-
-  // Tombol tambah jadwal dari dalam modal detail
-  elemenHalaman.tombolTambahJadwalDariDetail.addEventListener("click", function () {
-    tutupModalDetailTanggal();
-    bukaModalTambahJadwal(dataAplikasi.tanggalJadwalYangDipilih);
-  });
-
-  // Klik tombol hapus di daftar jadwal dalam modal detail
-  elemenHalaman.daftarJadwalDetailTanggal.addEventListener("click", function (event) {
-    const tombolHapus = event.target.closest(".tombol-hapus-jadwal");
-    if (!tombolHapus) return;
-
-    const idJadwal   = tombolHapus.dataset.idJadwal;
-    const kodeTanggal = dataAplikasi.tanggalJadwalYangDipilih;
-
-    hapusJadwalDenganKonfirmasi(idJadwal, kodeTanggal);
-  });
-
-  // Tutup modal detail saat klik di luar
-  elemenHalaman.modalDetailTanggal.addEventListener("click", function (event) {
-    if (event.target === elemenHalaman.modalDetailTanggal) {
-      tutupModalDetailTanggal();
+    if (!kotakTanggal) {
+      return;
     }
+
+    bukaModalTambahJadwal(kotakTanggal.dataset.tanggal);
   });
 
-  // Submit form tambah jadwal
   elemenHalaman.formTambahJadwal.addEventListener("submit", function (event) {
     event.preventDefault();
 
     const hasilValidasi = validasiFormJadwal();
-    if (!hasilValidasi.formValid) return;
+
+    if (!hasilValidasi.formValid) {
+      return;
+    }
 
     const jadwalBaru = buatDataJadwal(
       hasilValidasi.namaJadwal,
@@ -1249,51 +1482,59 @@ function pasangSemuaEventListener() {
     tampilkanToast("Jadwal baru berhasil disimpan.");
   });
 
-  // Simpan nama pengguna
   elemenHalaman.tombolSimpanNama.addEventListener("click", simpanNamaPengguna);
-
-  // Floating button mobile ke halaman tugas
   elemenHalaman.tombolTambahCepatMobile.addEventListener("click", function () {
     tampilkanHalaman("tugas");
     elemenHalaman.inputNamaTugas.focus();
   });
-
-  // Upload foto profil
   elemenHalaman.tombolUploadFoto.addEventListener("click", function () {
     elemenHalaman.inputFotoProfil.click();
   });
   elemenHalaman.inputFotoProfil.addEventListener("change", prosesUploadFotoProfil);
   elemenHalaman.tombolHapusFoto.addEventListener("click", hapusFotoProfil);
 
-  // Toggle dark mode
   elemenHalaman.toggleModeGelap.addEventListener("change", function (event) {
     dataAplikasi.modeGelapAktif = event.target.checked;
     simpanDataKeLocalStorage(namaPenyimpananLocalStorage.modeGelap, dataAplikasi.modeGelapAktif);
     terapkanModeGelap();
   });
 
-  // Toggle notifikasi deadline
   elemenHalaman.toggleNotifikasiDeadline.addEventListener("change", function (event) {
     dataAplikasi.notifikasiDeadlineAktif = event.target.checked;
     simpanDataKeLocalStorage(namaPenyimpananLocalStorage.notifikasiDeadline, dataAplikasi.notifikasiDeadlineAktif);
     tampilkanDashboard();
   });
 
-  // Reset semua data tugas
   elemenHalaman.tombolResetData.addEventListener("click", resetSemuaDataTugas);
 
-  // Tombol konfirmasi modal
+  // ================================
+  // EVENT LISTENER MATA KULIAH (BARU)
+  // ================================
+
+  // Klik tombol Tambah mata kuliah
+  elemenHalaman.tombolTambahMataKuliah.addEventListener("click", tambahMataKuliahBaru);
+
+  // Tekan Enter di input nama mata kuliah → sama seperti klik tombol Tambah
+  elemenHalaman.inputNamaMataKuliah.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Cegah form submit bawaan browser
+      tambahMataKuliahBaru();
+    }
+  });
+
+  // Bersihkan pesan error saat user mulai mengetik lagi
+  elemenHalaman.inputNamaMataKuliah.addEventListener("input", function () {
+    elemenHalaman.pesanErrorMataKuliahBaru.textContent = "";
+    elemenHalaman.inputNamaMataKuliah.classList.remove("input-error");
+  });
   elemenHalaman.tombolSetujuKonfirmasi.addEventListener("click", function () {
     tutupModalKonfirmasi(true);
   });
   elemenHalaman.tombolBatalKonfirmasi.addEventListener("click", function () {
     tutupModalKonfirmasi(false);
   });
-
-  // Tutup modal jadwal dengan tombol batal
   elemenHalaman.tombolBatalJadwal.addEventListener("click", tutupModalTambahJadwal);
 
-  // Tutup modal saat klik latar (overlay)
   elemenHalaman.modalKonfirmasi.addEventListener("click", function (event) {
     if (event.target === elemenHalaman.modalKonfirmasi) {
       tutupModalKonfirmasi(false);
@@ -1306,21 +1547,20 @@ function pasangSemuaEventListener() {
     }
   });
 
-  // Tombol Escape menutup semua modal yang terbuka
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") {
       tutupModalKonfirmasi(false);
       tutupModalTambahJadwal();
-      tutupModalDetailTanggal();
     }
   });
 }
 
-function pindahBulanKalender(jumlah) {
-  const tanggalSekarang = dataAplikasi.bulanKalenderYangDibuka;
-  const bulanBaru       = tanggalSekarang.getMonth() + jumlah;
+function pindahBulanKalender(jumlahPerpindahanBulan) {
+  const tanggalKalenderSaatIni = dataAplikasi.bulanKalenderYangDibuka;
+  const tahunBaru = tanggalKalenderSaatIni.getFullYear();
+  const bulanBaru = tanggalKalenderSaatIni.getMonth() + jumlahPerpindahanBulan;
 
-  dataAplikasi.bulanKalenderYangDibuka = new Date(tanggalSekarang.getFullYear(), bulanBaru, 1);
+  dataAplikasi.bulanKalenderYangDibuka = new Date(tahunBaru, bulanBaru, 1);
   tampilkanKalender();
 }
 
@@ -1332,19 +1572,24 @@ Project lama pernah menyimpan tugas dengan nama property berbeda.
 Fungsi ini membantu agar data lama tetap bisa dibaca.
 */
 function pindahkanDataTugasLamaJikaAda() {
-  if (dataAplikasi.daftarSemuaTugas.length > 0) return;
+  if (dataAplikasi.daftarSemuaTugas.length > 0) {
+    return;
+  }
 
   const dataTugasLama = ambilDataDariLocalStorage("tugas", []);
-  if (!Array.isArray(dataTugasLama) || dataTugasLama.length === 0) return;
 
-  dataAplikasi.daftarSemuaTugas = dataTugasLama.map(function (tugasLama, i) {
+  if (!Array.isArray(dataTugasLama) || dataTugasLama.length === 0) {
+    return;
+  }
+
+  dataAplikasi.daftarSemuaTugas = dataTugasLama.map(function (tugasLama, urutanTugas) {
     return {
-      id:           `${Date.now()}-${i}`,
-      namaTugas:    tugasLama.judul    || "Tugas tanpa nama",
-      mataKuliah:   tugasLama.matkul   || "Mata kuliah",
-      deadline:     tugasLama.deadline,
+      id: `${Date.now()}-${urutanTugas}`,
+      namaTugas: tugasLama.judul || "Tugas tanpa nama",
+      mataKuliah: tugasLama.matkul || "Mata kuliah",
+      deadline: tugasLama.deadline,
       sudahSelesai: Boolean(tugasLama.selesai),
-      dibuatPada:   new Date().toISOString()
+      dibuatPada: new Date().toISOString()
     };
   });
 
@@ -1352,30 +1597,32 @@ function pindahkanDataTugasLamaJikaAda() {
 }
 
 function rapikanFormatDataTugasYangSudahTersimpan() {
-  dataAplikasi.daftarSemuaTugas = dataAplikasi.daftarSemuaTugas.map(function (tugas, i) {
+  dataAplikasi.daftarSemuaTugas = dataAplikasi.daftarSemuaTugas.map(function (tugas, urutanTugas) {
     return {
-      id:           tugas.id          || `${Date.now()}-${i}`,
-      namaTugas:    tugas.namaTugas   || tugas.title  || tugas.judul || "Tugas tanpa nama",
-      mataKuliah:   tugas.mataKuliah  || tugas.course || tugas.matkul || "Mata kuliah",
-      deadline:     tugas.deadline,
+      id: tugas.id || `${Date.now()}-${urutanTugas}`,
+      namaTugas: tugas.namaTugas || tugas.title || tugas.judul || "Tugas tanpa nama",
+      mataKuliah: tugas.mataKuliah || tugas.course || tugas.matkul || "Mata kuliah",
+      deadline: tugas.deadline,
       sudahSelesai: Boolean(tugas.sudahSelesai || tugas.isCompleted || tugas.selesai),
-      dibuatPada:   tugas.dibuatPada  || tugas.createdAt || new Date().toISOString()
+      dibuatPada: tugas.dibuatPada || tugas.createdAt || new Date().toISOString()
     };
   });
+
   simpanDaftarTugas();
 }
 
 function rapikanFormatDataJadwalYangSudahTersimpan() {
-  dataAplikasi.daftarSemuaJadwal = dataAplikasi.daftarSemuaJadwal.map(function (jadwal, i) {
+  dataAplikasi.daftarSemuaJadwal = dataAplikasi.daftarSemuaJadwal.map(function (jadwal, urutanJadwal) {
     return {
-      id:             jadwal.id             || `${Date.now()}-${i}`,
-      namaJadwal:     jadwal.namaJadwal     || jadwal.title    || "Jadwal tanpa nama",
-      tanggalJadwal:  jadwal.tanggalJadwal  || jadwal.date,
-      jamJadwal:      jadwal.jamJadwal      || jadwal.time     || "00:00",
+      id: jadwal.id || `${Date.now()}-${urutanJadwal}`,
+      namaJadwal: jadwal.namaJadwal || jadwal.title || "Jadwal tanpa nama",
+      tanggalJadwal: jadwal.tanggalJadwal || jadwal.date,
+      jamJadwal: jadwal.jamJadwal || jadwal.time || "00:00",
       kategoriJadwal: jadwal.kategoriJadwal || jadwal.category || "kuliah",
-      dibuatPada:     jadwal.dibuatPada     || jadwal.createdAt || new Date().toISOString()
+      dibuatPada: jadwal.dibuatPada || jadwal.createdAt || new Date().toISOString()
     };
   });
+
   simpanDaftarJadwal();
 }
 
@@ -1386,72 +1633,81 @@ FUNGSI AWAL APLIKASI
 Function ini pertama kali dipanggil saat file script.js selesai dibaca browser.
 */
 function jalankanAplikasi() {
-  // Bersihkan dan siapkan data
   pindahkanDataTugasLamaJikaAda();
   rapikanFormatDataTugasYangSudahTersimpan();
   rapikanFormatDataJadwalYangSudahTersimpan();
 
-  // Pasang semua event listener
+  // ================================
+  // INISIALISASI MATA KULIAH (BARU)
+  // Harus dipanggil sebelum pasangSemuaEventListener
+  // agar dropdown sudah terisi saat halaman dibuka
+  // ================================
+  inisialisasiDaftarMataKuliah();
+
   pasangSemuaEventListener();
 
-  // Set tanggal minimal deadline = hari ini
   const tanggalHariIni = ubahTanggalMenjadiKode(new Date());
   elemenHalaman.inputDeadlineTugas.min = tanggalHariIni;
 
-  // Load nama pengguna kalau ada
-  const namaTersimpan = localStorage.getItem(namaPenyimpananLocalStorage.namaPengguna);
-  if (namaTersimpan) {
-    elemenHalaman.inputNamaPengguna.value = namaTersimpan;
-    tampilkanNamaPengguna(namaTersimpan);
+  const namaPenggunaTersimpan = localStorage.getItem(namaPenyimpananLocalStorage.namaPengguna);
+
+  if (namaPenggunaTersimpan) {
+    elemenHalaman.inputNamaPengguna.value = namaPenggunaTersimpan;
+    tampilkanNamaPengguna(namaPenggunaTersimpan);
   } else {
     tampilkanInisialProfil("");
   }
 
-  // Load foto profil, toggle, dan mode gelap
   tampilkanFotoProfil();
   elemenHalaman.toggleNotifikasiDeadline.checked = dataAplikasi.notifikasiDeadlineAktif;
   terapkanModeGelap();
-
-  // Tampilkan halaman awal dan semua data
   tampilkanHalaman(dataAplikasi.halamanYangSedangDibuka);
   tampilkanSemuaDataAplikasi();
+
+  // ================================
+  // RENDER MATA KULIAH SAAT AWAL (BARU)
+  // Isi dropdown dan daftar pengaturan setelah semua siap
+  // ================================
+  perbaruiDropdownMataKuliah();
+  tampilkanDaftarMataKuliahDiPengaturan();
 }
 
-// Jalankan aplikasi
 jalankanAplikasi();
 
-/*
-================================
+/* ================================
 BOTTOM NAVIGATION MOBILE
-================================
-Ini untuk navbar bawah di tampilan HP.
-*/
+================================ */
+
 const semuaTombolNavMobile = document.querySelectorAll(".tombol-nav-mobile");
 
-semuaTombolNavMobile.forEach(function (tombolMobile) {
-  tombolMobile.addEventListener("click", function () {
+semuaTombolNavMobile.forEach(function(tombolMobile) {
+
+  tombolMobile.addEventListener("click", function() {
+
     const halamanTujuan = tombolMobile.dataset.halaman;
 
     tampilkanHalaman(halamanTujuan);
 
-    // Update tampilan aktif di bottom nav
-    semuaTombolNavMobile.forEach(function (nav) {
+    semuaTombolNavMobile.forEach(function(nav) {
       nav.classList.remove("aktif");
     });
 
     tombolMobile.classList.add("aktif");
+
   });
+
 });
 
-/*
-================================
+/* ================================
 FLOATING BUTTON MOBILE
-================================
-Tombol + di pojok kanan bawah untuk cepat tambah tugas.
-*/
+================================ */
+
 const tombolTambahMobile = document.getElementById("tombolTambahMobile");
 
-tombolTambahMobile.addEventListener("click", function () {
+tombolTambahMobile.addEventListener("click", function() {
+
   tampilkanHalaman("tugas");
+
   elemenHalaman.inputNamaTugas.focus();
+
 });
