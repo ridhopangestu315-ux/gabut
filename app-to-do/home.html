@@ -8,9 +8,13 @@
 </head>
 <body>
   <div class="wadah-aplikasi">
+
+    <!-- ================================
+         SIDEBAR MENU
+    ================================ -->
     <aside class="menu-samping">
       <div class="identitas-aplikasi">
-        <span class="ikon-aplikasi">TD</span>
+        <span class="ikon-aplikasi">SF</span>
         <div>
           <h2>StudyFlow</h2>
           <p>Dashboard Tugas</p>
@@ -18,14 +22,27 @@
       </div>
 
       <nav class="daftar-menu" aria-label="Menu utama">
-        <button class="tombol-menu aktif" type="button" data-halaman="dashboard">Dashboard</button>
-        <button class="tombol-menu" type="button" data-halaman="tugas">Tugas</button>
-        <button class="tombol-menu" type="button" data-halaman="kalender">Kalender</button>
-        <button class="tombol-menu" type="button" data-halaman="pengaturan">Pengaturan</button>
+        <button class="tombol-menu aktif" type="button" data-halaman="dashboard">
+          🏠 Dashboard
+        </button>
+        <button class="tombol-menu" type="button" data-halaman="tugas">
+          📚 Tugas
+        </button>
+        <button class="tombol-menu" type="button" data-halaman="kalender">
+          📅 Kalender
+        </button>
+        <button class="tombol-menu" type="button" data-halaman="pengaturan">
+          ⚙️ Pengaturan
+        </button>
       </nav>
     </aside>
 
+    <!-- ================================
+         KONTEN UTAMA
+    ================================ -->
     <main class="konten-utama">
+
+      <!-- Header dengan sapaan dan foto profil -->
       <header class="kepala-halaman">
         <div>
           <p class="teks-kecil">To-Do Dashboard Mahasiswa</p>
@@ -36,6 +53,9 @@
         </div>
       </header>
 
+      <!-- ================================
+           HALAMAN DASHBOARD
+      ================================ -->
       <section id="dashboard" class="halaman halaman-aktif">
         <div class="judul-bagian">
           <div>
@@ -44,6 +64,7 @@
           </div>
         </div>
 
+        <!-- Kartu statistik 4 kolom -->
         <div class="grid-statistik">
           <article class="kartu-statistik warna-biru">
             <p>Total Tugas</p>
@@ -63,6 +84,7 @@
           </article>
         </div>
 
+        <!-- Panel notifikasi dan tugas terbaru -->
         <div class="grid-konten">
           <section class="panel">
             <div class="kepala-panel">
@@ -80,6 +102,9 @@
         </div>
       </section>
 
+      <!-- ================================
+           HALAMAN TUGAS
+      ================================ -->
       <section id="tugas" class="halaman">
         <div class="judul-bagian">
           <div>
@@ -88,6 +113,7 @@
           </div>
         </div>
 
+        <!-- Form tambah tugas -->
         <form id="formTambahTugas" class="form-tugas" novalidate>
           <div class="grup-form">
             <label for="inputNamaTugas">Nama tugas</label>
@@ -120,8 +146,9 @@
           <button class="tombol-utama" type="submit">Tambah Tugas</button>
         </form>
 
+        <!-- Filter dan pencarian -->
         <div class="alat-filter-tugas">
-          <input type="search" id="inputPencarianTugas" placeholder="Cari tugas atau mata kuliah">
+          <input type="search" id="inputPencarianTugas" placeholder="🔍 Cari tugas atau mata kuliah">
           <select id="filterStatusTugas">
             <option value="semua">Semua tugas</option>
             <option value="belum">Belum selesai</option>
@@ -132,16 +159,23 @@
         <div id="daftarTugas" class="daftar-tugas"></div>
       </section>
 
+      <!-- ================================
+           HALAMAN KALENDER
+      ================================ -->
       <section id="kalender" class="halaman">
         <div class="judul-bagian">
           <div>
             <p class="teks-kecil">Agenda</p>
             <h2>Kalender Mahasiswa</h2>
           </div>
-          <button id="tombolTambahJadwalCepat" class="tombol-utama" type="button">Tambah Jadwal</button>
+          <button id="tombolTambahJadwalCepat" class="tombol-utama" type="button">
+            + Tambah Jadwal
+          </button>
         </div>
 
         <div class="layout-kalender">
+
+          <!-- Kartu kalender bulanan -->
           <section class="kartu-kalender">
             <div class="toolbar-kalender">
               <div>
@@ -167,18 +201,22 @@
               </select>
             </div>
 
-            <div class="nama-hari-kalender" aria-hidden="true">
-              <span>Min</span>
-              <span>Sen</span>
-              <span>Sel</span>
-              <span>Rab</span>
-              <span>Kam</span>
-              <span>Jum</span>
-              <span>Sab</span>
+            <!-- Wrapper bisa scroll horizontal di HP supaya kalender tidak terpotong -->
+            <div class="kalender-scroll-wrapper">
+              <div class="nama-hari-kalender" aria-hidden="true">
+                <span>Min</span>
+                <span>Sen</span>
+                <span>Sel</span>
+                <span>Rab</span>
+                <span>Kam</span>
+                <span>Jum</span>
+                <span>Sab</span>
+              </div>
+              <div id="isiKalender" class="isi-kalender"></div>
             </div>
-            <div id="isiKalender" class="isi-kalender"></div>
           </section>
 
+          <!-- Sidebar agenda di sebelah kalender -->
           <aside class="sisi-agenda">
             <section class="panel">
               <h3>Agenda Hari Ini</h3>
@@ -190,9 +228,13 @@
               <div id="daftarReminderDeadline" class="daftar-agenda"></div>
             </section>
           </aside>
+
         </div>
       </section>
 
+      <!-- ================================
+           HALAMAN PENGATURAN
+      ================================ -->
       <section id="pengaturan" class="halaman">
         <div class="judul-bagian">
           <div>
@@ -243,11 +285,17 @@
           </section>
         </div>
       </section>
+
     </main>
   </div>
 
+  <!-- ================================
+       MODAL KONFIRMASI HAPUS
+  ================================ -->
   <div id="modalKonfirmasi" class="lapisan-modal" aria-hidden="true">
-    <div class="modal-konfirmasi" role="dialog" aria-modal="true" aria-labelledby="judulModalKonfirmasi" aria-describedby="pesanModalKonfirmasi">
+    <div class="modal-konfirmasi" role="dialog" aria-modal="true"
+         aria-labelledby="judulModalKonfirmasi"
+         aria-describedby="pesanModalKonfirmasi">
       <div class="ikon-modal" aria-hidden="true">!</div>
       <div class="isi-modal">
         <p class="teks-kecil">Konfirmasi</p>
@@ -255,14 +303,22 @@
         <p id="pesanModalKonfirmasi">Data tugas yang sudah dihapus tidak dapat dikembalikan.</p>
       </div>
       <div class="aksi-modal">
-        <button id="tombolBatalKonfirmasi" class="tombol-modal tombol-modal-kedua" type="button">Batal</button>
-        <button id="tombolSetujuKonfirmasi" class="tombol-modal tombol-modal-bahaya" type="button">Hapus</button>
+        <button id="tombolBatalKonfirmasi" class="tombol-modal tombol-modal-kedua" type="button">
+          Batal
+        </button>
+        <button id="tombolSetujuKonfirmasi" class="tombol-modal tombol-modal-bahaya" type="button">
+          Hapus
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- ================================
+       MODAL TAMBAH JADWAL
+  ================================ -->
   <div id="modalJadwal" class="lapisan-modal" aria-hidden="true">
-    <form id="formTambahJadwal" class="modal-jadwal" role="dialog" aria-modal="true" aria-labelledby="judulModalJadwal" novalidate>
+    <form id="formTambahJadwal" class="modal-jadwal" role="dialog"
+          aria-modal="true" aria-labelledby="judulModalJadwal" novalidate>
       <div class="isi-modal">
         <p class="teks-kecil">Jadwal Baru</p>
         <h2 id="judulModalJadwal">Tambah Jadwal</h2>
@@ -300,42 +356,82 @@
       </div>
 
       <div class="aksi-modal">
-        <button id="tombolBatalJadwal" class="tombol-modal tombol-modal-kedua" type="button">Batal</button>
-        <button class="tombol-modal tombol-modal-utama" type="submit">Simpan Jadwal</button>
+        <button id="tombolBatalJadwal" class="tombol-modal tombol-modal-kedua" type="button">
+          Batal
+        </button>
+        <button class="tombol-modal tombol-modal-utama" type="submit">
+          Simpan Jadwal
+        </button>
       </div>
     </form>
   </div>
 
-  <button id="tombolTambahCepatMobile" class="tombol-tambah-cepat" type="button" aria-label="Tambah tugas cepat">+</button>
+  <!-- ================================
+       MODAL DETAIL TANGGAL (BARU)
+       Modal ini muncul saat user klik tanggal di kalender
+       Isinya daftar jadwal + tombol hapus tiap jadwal
+  ================================ -->
+  <div id="modalDetailTanggal" class="lapisan-modal" aria-hidden="true">
+    <div class="modal-detail-jadwal" role="dialog" aria-modal="true"
+         aria-labelledby="judulModalDetail">
+
+      <!-- Kepala modal: tanggal yang dipilih + tombol tutup -->
+      <div class="kepala-modal-detail">
+        <div>
+          <p class="teks-kecil">Jadwal di Tanggal</p>
+          <h2 id="judulModalDetail">15 Mei 2026</h2>
+        </div>
+        <button id="tombolTutupDetailTanggal" class="tombol-tutup-modal" type="button">
+          ✕
+        </button>
+      </div>
+
+      <!-- Daftar jadwal di tanggal yang dipilih, diisi oleh JavaScript -->
+      <div id="daftarJadwalDetailTanggal" class="daftar-jadwal-detail"></div>
+
+      <!-- Tombol tambah jadwal langsung dari modal detail -->
+      <button id="tombolTambahJadwalDariDetail" class="tombol-tambah-di-modal" type="button">
+        + Tambah jadwal di tanggal ini
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Floating button untuk mobile -->
+  <button id="tombolTambahCepatMobile" class="tombol-tambah-cepat" type="button" aria-label="Tambah tugas cepat">
+    +
+  </button>
+
+  <!-- Container toast notifikasi -->
   <div id="wadahToast" class="wadah-toast" aria-live="polite" aria-atomic="true"></div>
 
+  <!-- ================================
+       BOTTOM NAVIGATION MOBILE
+  ================================ -->
   <nav class="bottom-navigation-mobile">
+    <button class="tombol-nav-mobile aktif" data-halaman="dashboard">
+      <span>🏠</span>
+      <small>Dashboard</small>
+    </button>
+    <button class="tombol-nav-mobile" data-halaman="tugas">
+      <span>📚</span>
+      <small>Tugas</small>
+    </button>
+    <button class="tombol-nav-mobile" data-halaman="kalender">
+      <span>📅</span>
+      <small>Kalender</small>
+    </button>
+    <button class="tombol-nav-mobile" data-halaman="pengaturan">
+      <span>⚙️</span>
+      <small>Pengaturan</small>
+    </button>
+  </nav>
 
-  <button class="tombol-nav-mobile aktif" data-halaman="dashboard">
-    <span>🏠</span>
-    <small>Dashboard</small>
+  <!-- Floating button tambah tugas mobile -->
+  <button id="tombolTambahMobile" class="tombol-tambah-mobile">
+    +
   </button>
 
-  <button class="tombol-nav-mobile" data-halaman="tugas">
-    <span>📚</span>
-    <small>Tugas</small>
-  </button>
-
-  <button class="tombol-nav-mobile" data-halaman="kalender">
-    <span>📅</span>
-    <small>Kalender</small>
-  </button>
-
-  <button class="tombol-nav-mobile" data-halaman="pengaturan">
-    <span>⚙️</span>
-    <small>Pengaturan</small>
-  </button>
-
-</nav>
-
-<button id="tombolTambahMobile" class="tombol-tambah-mobile">
-  +
-</button>
   <script src="script.js"></script>
 </body>
 </html>

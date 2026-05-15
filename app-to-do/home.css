@@ -1,23 +1,33 @@
+/* ================================
+   VARIABEL WARNA & DESAIN
+   Semua warna dan ukuran dikumpulkan di sini
+   biar gampang diganti kalau mau ubah tema
+================================ */
 :root {
-  --warna-latar: #f6f8fc;
+  --warna-latar: #f0f4ff;
   --warna-kartu: #ffffff;
-  --warna-kartu-transparan: rgba(255, 255, 255, 0.82);
-  --warna-kartu-lembut: #edf4ff;
-  --warna-teks: #111827;
-  --warna-teks-lembut: #64748b;
-  --warna-garis: #e2e8f0;
-  --warna-utama: #3b82f6;
-  --warna-utama-gelap: #2563eb;
-  --warna-bahaya: #dc2626;
+  --warna-kartu-transparan: rgba(255, 255, 255, 0.88);
+  --warna-kartu-lembut: #e8f0ff;
+  --warna-teks: #1a1f36;
+  --warna-teks-lembut: #6b7694;
+  --warna-garis: #e0e8f5;
+  --warna-utama: #4f6ef7;
+  --warna-utama-gelap: #3553e0;
+  --warna-bahaya: #e53e3e;
   --warna-peringatan: #d97706;
   --warna-sukses: #16a34a;
-  --gradient-utama: linear-gradient(135deg, #3b82f6, #06b6d4);
-  --bayangan-kartu: 0 18px 45px rgba(15, 23, 42, 0.08);
-  --bayangan-melayang: 0 20px 60px rgba(15, 23, 42, 0.16);
-  --radius-kartu: 18px;
+  --gradient-utama: linear-gradient(135deg, #4f6ef7, #7c3aed);
+  --gradient-lembut: linear-gradient(135deg, #eef2ff, #f5f3ff);
+  --bayangan-kartu: 0 4px 24px rgba(79, 110, 247, 0.08);
+  --bayangan-melayang: 0 12px 40px rgba(79, 110, 247, 0.18);
+  --radius-kartu: 20px;
   --radius-kecil: 12px;
+  --font-utama: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
 }
 
+/* ================================
+   RESET DASAR
+================================ */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -26,15 +36,16 @@
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
-    linear-gradient(180deg, #fbfdff 0%, var(--warna-latar) 44%);
+  background: var(--warna-latar);
   color: var(--warna-teks);
-  font-family: "Segoe UI", Arial, sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-utama);
+  line-height: 1.55;
   scroll-behavior: smooth;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Tambahkan font Google kalau ada koneksi internet */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 button,
 input,
@@ -46,29 +57,38 @@ button {
   cursor: pointer;
 }
 
+/* ================================
+   LAYOUT UTAMA
+================================ */
 .wadah-aplikasi {
   display: flex;
   min-height: 100vh;
 }
 
+/* ================================
+   SIDEBAR / MENU SAMPING
+================================ */
 .menu-samping {
   position: sticky;
   top: 0;
-  width: 260px;
+  width: 250px;
   height: 100vh;
-  padding: 24px;
+  padding: 20px 16px;
   background: var(--warna-kartu-transparan);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
   border-right: 1px solid var(--warna-garis);
-  box-shadow: var(--bayangan-kartu);
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  box-shadow: 4px 0 24px rgba(79, 110, 247, 0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  overflow-y: auto;
 }
 
 .identitas-aplikasi {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  padding: 4px 4px 20px;
+  border-bottom: 1px solid var(--warna-garis);
 }
 
 .ikon-aplikasi {
@@ -78,65 +98,87 @@ button {
   place-items: center;
   border-radius: 14px;
   background: var(--gradient-utama);
-  color: #ffffff;
+  color: #fff;
   font-weight: 800;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(79, 110, 247, 0.3);
 }
 
 .identitas-aplikasi h2 {
-  font-size: 20px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .identitas-aplikasi p,
 .teks-kecil {
   color: var(--warna-teks-lembut);
-  font-size: 13px;
+  font-size: 12px;
+  margin-top: 1px;
 }
 
+/* Tombol menu di sidebar */
 .daftar-menu {
   display: grid;
-  gap: 10px;
+  gap: 4px;
 }
 
 .tombol-menu {
   width: 100%;
-  padding: 12px 14px;
+  padding: 11px 14px;
   border: 0;
   border-radius: 14px;
   background: transparent;
   color: var(--warna-teks-lembut);
   text-align: left;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.tombol-menu:hover,
-.tombol-menu.aktif {
+.tombol-menu:hover {
   background: var(--warna-kartu-lembut);
   color: var(--warna-utama);
   transform: translateX(3px);
 }
 
-.konten-utama {
-  flex: 1;
-  width: calc(100% - 260px);
-  padding: 28px;
+.tombol-menu.aktif {
+  background: var(--gradient-lembut);
+  color: var(--warna-utama);
+  transform: translateX(3px);
+  box-shadow: inset 0 0 0 1px rgba(79, 110, 247, 0.15);
 }
 
-.kepala-halaman,
-.judul-bagian,
-.kepala-panel {
+/* ================================
+   KONTEN UTAMA
+================================ */
+.konten-utama {
+  flex: 1;
+  width: calc(100% - 250px);
+  padding: 24px 28px;
+  overflow-x: hidden;
+}
+
+/* ================================
+   KEPALA HALAMAN (HEADER)
+================================ */
+.kepala-halaman {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-}
-
-.kepala-halaman {
   margin-bottom: 24px;
 }
 
 .kepala-halaman h1 {
   margin-top: 4px;
-  font-size: clamp(22px, 3vw, 30px);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
   line-height: 1.2;
 }
 
@@ -145,31 +187,32 @@ button {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #dbeafe;
+  background: var(--warna-kartu-lembut);
   color: var(--warna-utama);
-  font-weight: 900;
+  font-weight: 800;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .foto-profil-header {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 2px solid var(--warna-garis);
 }
 
 .preview-foto-profil {
-  width: 86px;
-  height: 86px;
-  flex: 0 0 auto;
-  border: 3px solid var(--warna-kartu-lembut);
-  font-size: 28px;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 3px solid var(--warna-garis);
+  font-size: 26px;
 }
 
 .foto-profil-header:hover,
 .preview-foto-profil:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 8px 20px rgba(79, 110, 247, 0.2);
 }
 
 .foto-profil-header img,
@@ -179,19 +222,22 @@ button {
   object-fit: cover;
 }
 
+/* ================================
+   ANIMASI PERPINDAHAN HALAMAN
+================================ */
 .halaman {
   display: none;
-  animation: animasiMasukHalaman 0.25s ease;
+  animation: animasiMasuk 0.25s ease;
 }
 
 .halaman-aktif {
   display: block;
 }
 
-@keyframes animasiMasukHalaman {
+@keyframes animasiMasuk {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -199,25 +245,37 @@ button {
   }
 }
 
+/* ================================
+   JUDUL BAGIAN HALAMAN
+================================ */
 .judul-bagian {
-  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .judul-bagian h2 {
   margin-top: 4px;
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
+/* ================================
+   KARTU STATISTIK (DASHBOARD)
+================================ */
 .grid-statistik,
 .grid-konten,
 .grid-pengaturan {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .grid-statistik {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .grid-konten,
@@ -225,6 +283,7 @@ button {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Kartu-kartu di halaman dashboard */
 .kartu-statistik,
 .panel,
 .item-tugas,
@@ -235,64 +294,82 @@ button {
   background: var(--warna-kartu-transparan);
   backdrop-filter: blur(16px);
   box-shadow: var(--bayangan-kartu);
-  transition: transform 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .kartu-statistik {
-  padding: 20px;
+  padding: 20px 22px;
   overflow: hidden;
   position: relative;
 }
 
+/* Lingkaran dekorasi di sudut kartu */
 .kartu-statistik::after {
   content: "";
   position: absolute;
-  right: -28px;
-  top: -28px;
-  width: 86px;
-  height: 86px;
+  right: -20px;
+  top: -20px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  background: rgba(59, 130, 246, 0.1);
+  background: currentColor;
+  opacity: 0.06;
 }
 
 .kartu-statistik:hover,
 .item-tugas:hover {
   transform: translateY(-3px);
+  box-shadow: var(--bayangan-melayang);
 }
 
-.kartu-statistik p,
+.kartu-statistik p {
+  color: var(--warna-teks-lembut);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .panel p {
   color: var(--warna-teks-lembut);
 }
 
 .kartu-statistik h3 {
   margin-top: 10px;
-  font-size: clamp(28px, 5vw, 36px);
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
-.warna-biru { border-left: 5px solid var(--warna-utama); }
-.warna-kuning { border-left: 5px solid #f59e0b; }
-.warna-hijau { border-left: 5px solid var(--warna-sukses); }
-.warna-merah { border-left: 5px solid var(--warna-bahaya); }
+/* Warna kiri tiap kartu statistik */
+.warna-biru  { border-left: 4px solid #4f6ef7; color: #4f6ef7; }
+.warna-kuning { border-left: 4px solid #f59e0b; color: #f59e0b; }
+.warna-hijau  { border-left: 4px solid #16a34a; color: #16a34a; }
+.warna-merah  { border-left: 4px solid #e53e3e; color: #e53e3e; }
 
 .panel {
-  padding: 20px;
+  padding: 22px;
 }
 
 .panel h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
+  margin-bottom: 14px;
+  font-size: 17px;
+  font-weight: 700;
 }
 
 .panel p {
   line-height: 1.5;
 }
 
+/* ================================
+   HALAMAN PENGATURAN
+================================ */
 .pengaturan-profil {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 14px;
 }
 
 .aksi-profil {
@@ -303,26 +380,29 @@ button {
 
 .pesan-error-foto {
   display: block;
-  min-height: 20px;
+  min-height: 18px;
   margin-bottom: 10px;
   color: var(--warna-bahaya);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .pesan-error-foto.tampil {
-  padding: 9px 11px;
+  padding: 9px 12px;
   border: 1px solid #fecaca;
-  border-radius: var(--radius-kartu);
+  border-radius: var(--radius-kecil);
   background: #fef2f2;
 }
 
+/* ================================
+   FORM TAMBAH TUGAS
+================================ */
 .form-tugas {
   display: grid;
   grid-template-columns: 1.2fr 1fr 0.8fr auto;
   gap: 12px;
   align-items: start;
   margin-bottom: 16px;
-  padding: 16px;
+  padding: 18px;
   border: 1px solid var(--warna-garis);
   border-radius: var(--radius-kartu);
   background: var(--warna-kartu);
@@ -331,32 +411,33 @@ button {
 
 .grup-form {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 label {
   color: var(--warna-teks);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 input,
 select {
   width: 100%;
-  min-height: 46px;
-  padding: 10px 12px;
-  border: 1px solid var(--warna-garis);
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--warna-garis);
   border-radius: var(--radius-kecil);
-  background: #ffffff;
+  background: #fff;
   color: var(--warna-teks);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
 }
 
 input:focus,
 select:focus {
   border-color: var(--warna-utama);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.12);
 }
 
 .input-error {
@@ -369,30 +450,37 @@ select:focus {
   font-size: 12px;
 }
 
+/* ================================
+   TOMBOL-TOMBOL
+================================ */
 .tombol-utama,
 .tombol-bahaya,
 .tombol-kecil,
 .tombol-kedua,
 .tombol-ikon {
-  min-height: 46px;
+  min-height: 44px;
   border: 0;
   border-radius: var(--radius-kecil);
   font-weight: 700;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-size: 14px;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
+/* Tombol biru utama */
 .tombol-utama {
   align-self: end;
   padding: 0 18px;
   background: var(--gradient-utama);
-  color: #ffffff;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(79, 110, 247, 0.25);
 }
 
 .tombol-utama:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 24px rgba(59, 130, 246, 0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(79, 110, 247, 0.35);
 }
 
+/* Tombol abu-abu sekunder */
 .tombol-kedua,
 .tombol-ikon {
   background: #eef2f7;
@@ -404,32 +492,36 @@ select:focus {
 }
 
 .tombol-ikon {
-  width: 42px;
-  font-size: 18px;
+  width: 44px;
+  font-size: 17px;
 }
 
 .tombol-kedua:hover,
 .tombol-ikon:hover {
-  background: #e2e8f0;
+  background: #dde5f0;
   transform: translateY(-1px);
 }
 
+/* Tombol merah bahaya */
 .tombol-bahaya {
   margin-top: 12px;
   padding: 0 16px;
   background: var(--warna-bahaya);
-  color: #ffffff;
+  color: #fff;
 }
 
 .tombol-bahaya:hover {
-  background: #b91c1c;
+  background: #c53030;
+  transform: translateY(-1px);
 }
 
+/* Tombol kecil */
 .tombol-kecil {
   min-height: 34px;
   padding: 0 12px;
-  background: #e8eefb;
+  background: var(--warna-kartu-lembut);
   color: var(--warna-utama);
+  font-size: 13px;
 }
 
 .tombol-hapus {
@@ -437,18 +529,28 @@ select:focus {
   color: var(--warna-bahaya);
 }
 
-.alat-filter-tugas {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 190px;
-  gap: 12px;
-  margin-bottom: 16px;
+.tombol-hapus:hover {
+  background: #fecaca;
 }
 
+/* ================================
+   FILTER DAN PENCARIAN TUGAS
+================================ */
+.alat-filter-tugas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* ================================
+   DAFTAR TUGAS
+================================ */
 .daftar-tugas,
 .daftar-ringkas,
 .daftar-agenda {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .item-tugas,
@@ -456,8 +558,8 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px;
+  gap: 14px;
+  padding: 16px 18px;
 }
 
 .bagian-utama-tugas {
@@ -468,15 +570,17 @@ select:focus {
 }
 
 .checkbox-tugas {
-  width: 22px;
-  min-width: 22px;
-  height: 22px;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
   margin-top: 3px;
   accent-color: var(--warna-utama);
+  cursor: pointer;
 }
 
 .judul-tugas {
   font-weight: 700;
+  font-size: 15px;
   overflow-wrap: anywhere;
 }
 
@@ -484,7 +588,7 @@ select:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--warna-teks-lembut);
   font-size: 13px;
 }
@@ -492,26 +596,29 @@ select:focus {
 .aksi-tugas {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
+/* Tugas yang sudah selesai tampil beda */
 .tugas-selesai .judul-tugas {
   color: var(--warna-teks-lembut);
   text-decoration: line-through;
 }
 
 .tugas-selesai {
-  opacity: 0.82;
+  opacity: 0.75;
 }
 
+/* Badge status tugas */
 .label-status {
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
-  padding: 3px 9px;
+  min-height: 22px;
+  padding: 2px 9px;
   border-radius: 999px;
   background: var(--warna-kartu-lembut);
   color: var(--warna-utama);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -525,15 +632,20 @@ select:focus {
   color: var(--warna-sukses);
 }
 
+/* Kotak kosong saat tidak ada data */
 .kotak-kosong {
-  padding: 22px;
+  padding: 28px;
   color: var(--warna-teks-lembut);
   text-align: center;
+  font-size: 14px;
 }
 
+/* ================================
+   KALENDER
+================================ */
 .layout-kalender {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(0, 1fr) 290px;
   gap: 16px;
   align-items: start;
 }
@@ -545,6 +657,9 @@ select:focus {
   backdrop-filter: blur(16px);
   box-shadow: var(--bayangan-kartu);
   overflow: hidden;
+
+  /* Supaya kalender tidak terpotong di layar kecil */
+  min-width: 0;
 }
 
 .toolbar-kalender,
@@ -552,26 +667,30 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px;
+  gap: 14px;
+  padding: 16px 18px;
   border-bottom: 1px solid var(--warna-garis);
 }
 
 .toolbar-kalender h3 {
   margin-top: 4px;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .aksi-kalender {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .filter-kalender select {
-  max-width: 220px;
+  max-width: 200px;
 }
 
+/* Grid nama hari dan kotak tanggal */
 .nama-hari-kalender,
 .isi-kalender {
   display: grid;
@@ -580,29 +699,33 @@ select:focus {
 
 .nama-hari-kalender {
   border-bottom: 1px solid var(--warna-garis);
-  background: #f8fafc;
+  background: var(--gradient-lembut);
 }
 
 .nama-hari-kalender span {
-  padding: 12px;
+  padding: 10px 6px;
   color: var(--warna-teks-lembut);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* Setiap kotak tanggal di kalender */
 .kotak-tanggal {
   position: relative;
-  min-height: 126px;
-  padding: 10px;
+  min-height: 100px;
+  padding: 8px;
   border: 0;
   border-right: 1px solid var(--warna-garis);
   border-bottom: 1px solid var(--warna-garis);
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.7);
   color: var(--warna-teks);
   text-align: left;
+  vertical-align: top;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .kotak-tanggal:nth-child(7n) {
@@ -615,66 +738,70 @@ select:focus {
 
 .kotak-tanggal:focus-visible {
   z-index: 1;
-  outline: 3px solid rgba(37, 99, 235, 0.22);
-  outline-offset: -3px;
+  outline: 2px solid rgba(79, 110, 247, 0.3);
+  outline-offset: -2px;
 }
 
 .tanggal-luar-bulan {
   background: #f8fafc;
-  color: var(--warna-teks-lembut);
+  color: #c0c8d8;
 }
 
 .kepala-tanggal {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 5px;
 }
 
 .angka-tanggal {
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
 }
 
+/* Hari ini dapat lingkaran biru */
 .tanggal-hari-ini .angka-tanggal {
   background: var(--gradient-utama);
-  color: #ffffff;
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(79, 110, 247, 0.35);
 }
 
 .titik-jadwal {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--warna-utama);
+  flex-shrink: 0;
 }
 
-.kategori-kuliah { --warna-jadwal: #4285f4; }
+/* Warna tiap kategori jadwal */
+.kategori-kuliah    { --warna-jadwal: #4285f4; }
 .kategori-organisasi { --warna-jadwal: #34a853; }
-.kategori-ujian { --warna-jadwal: #fbbc04; }
-.kategori-pribadi { --warna-jadwal: #a142f4; }
-.kategori-deadline { --warna-jadwal: #ea4335; }
+.kategori-ujian     { --warna-jadwal: #fbbc04; }
+.kategori-pribadi   { --warna-jadwal: #a142f4; }
+.kategori-deadline  { --warna-jadwal: #ea4335; }
 
 .daftar-jadwal-di-tanggal {
   display: grid;
-  gap: 5px;
+  gap: 3px;
 }
 
 .label-jadwal {
   display: block;
   width: 100%;
-  padding: 5px 7px;
-  border-left: 4px solid var(--warna-jadwal);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--warna-jadwal) 14%, transparent);
+  padding: 3px 6px;
+  border-left: 3px solid var(--warna-jadwal);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--warna-jadwal) 12%, transparent);
   color: var(--warna-teks);
-  font-size: 12px;
-  line-height: 1.25;
+  font-size: 11px;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -686,22 +813,31 @@ select:focus {
 
 .jumlah-jadwal-lain {
   color: var(--warna-teks-lembut);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  padding: 2px 4px;
 }
 
+/* ================================
+   SIDEBAR AGENDA DI KALENDER
+================================ */
 .sisi-agenda {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
+/* Tiap item di daftar agenda */
 .item-agenda {
-  padding: 12px;
+  padding: 12px 14px;
   border: 1px solid var(--warna-garis);
   border-left: 4px solid var(--warna-jadwal);
-  border-radius: var(--radius-kartu);
+  border-radius: var(--radius-kecil);
   background: var(--warna-kartu);
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .item-agenda:hover {
@@ -709,22 +845,62 @@ select:focus {
   background: var(--warna-kartu-lembut);
 }
 
+.info-agenda {
+  flex: 1;
+  min-width: 0;
+}
+
 .item-agenda strong {
   display: block;
   margin-bottom: 4px;
   overflow-wrap: anywhere;
+  font-size: 14px;
 }
 
 .item-agenda p {
   color: var(--warna-teks-lembut);
-  font-size: 13px;
+  font-size: 12px;
 }
 
+/* Tombol hapus jadwal di samping item agenda */
+.tombol-hapus-jadwal {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  min-height: unset;
+  border: none;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: var(--warna-bahaya);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.15s;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.tombol-hapus-jadwal:hover {
+  background: #fecaca;
+  transform: scale(1.08);
+}
+
+/* ================================
+   PENGATURAN - TOGGLE SWITCH
+================================ */
 .baris-switch {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 10px 0;
+}
+
+.baris-switch:not(:last-child) {
+  border-bottom: 1px solid var(--warna-garis);
 }
 
 .baris-switch input {
@@ -737,6 +913,9 @@ select:focus {
   border-color: #fecaca;
 }
 
+/* ================================
+   MODAL / POPUP
+================================ */
 .lapisan-modal {
   position: fixed;
   inset: 0;
@@ -744,8 +923,8 @@ select:focus {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.48);
-  backdrop-filter: blur(14px);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(12px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.22s ease;
@@ -760,17 +939,17 @@ select:focus {
 .modal-jadwal {
   width: min(520px, 100%);
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 22px;
   background: var(--warna-kartu-transparan);
   backdrop-filter: blur(20px);
-  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28);
-  transform: translateY(12px) scale(0.96);
-  transition: transform 0.22s ease, background-color 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  transform: translateY(14px) scale(0.96);
+  transition: transform 0.22s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .modal-konfirmasi {
-  width: min(440px, 100%);
+  width: min(420px, 100%);
 }
 
 .lapisan-modal.tampil .modal-konfirmasi,
@@ -780,25 +959,28 @@ select:focus {
 
 .ikon-modal {
   display: grid;
-  width: 52px;
-  height: 52px;
-  margin-bottom: 18px;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 16px;
   place-items: center;
-  border-radius: 16px;
+  border-radius: 14px;
   background: #fef3c7;
   color: var(--warna-peringatan);
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
 }
 
 .isi-modal h2 {
   margin: 4px 0 8px;
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .isi-modal p:last-child {
   color: var(--warna-teks-lembut);
   line-height: 1.6;
+  font-size: 14px;
 }
 
 .modal-jadwal .grup-form {
@@ -815,16 +997,17 @@ select:focus {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .tombol-modal {
   min-height: 42px;
   padding: 0 18px;
   border: 0;
-  border-radius: var(--radius-kartu);
-  font-weight: 800;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .tombol-modal:hover {
@@ -837,58 +1020,153 @@ select:focus {
 }
 
 .tombol-modal-kedua:hover {
-  background: #e2e8f0;
+  background: #dde5f0;
 }
 
 .tombol-modal-utama {
   background: var(--gradient-utama);
-  color: #ffffff;
-  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(79, 110, 247, 0.25);
 }
 
 .tombol-modal-utama:hover {
-  background: var(--warna-utama-gelap);
+  box-shadow: 0 8px 24px rgba(79, 110, 247, 0.35);
 }
 
 .tombol-modal-bahaya {
   background: var(--warna-bahaya);
-  color: #ffffff;
-  box-shadow: 0 12px 22px rgba(220, 38, 38, 0.22);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(229, 62, 62, 0.25);
 }
 
 .tombol-modal-bahaya:hover {
-  background: #b91c1c;
+  background: #c53030;
+}
+
+/* ================================
+   DETAIL JADWAL TANGGAL (MODAL BARU)
+   Modal untuk melihat dan hapus jadwal di tanggal tertentu
+================================ */
+.modal-detail-jadwal {
+  width: min(480px, 100%);
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 22px;
+  background: var(--warna-kartu-transparan);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  transform: translateY(14px) scale(0.96);
+  transition: transform 0.22s ease, background-color 0.3s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.lapisan-modal.tampil .modal-detail-jadwal {
+  transform: translateY(0) scale(1);
+}
+
+/* Kepala modal detail */
+.kepala-modal-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.kepala-modal-detail h2 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.kepala-modal-detail p {
+  color: var(--warna-teks-lembut);
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* Tombol tutup di pojok modal */
+.tombol-tutup-modal {
+  width: 34px;
+  height: 34px;
+  min-height: unset;
+  border: none;
+  border-radius: 10px;
+  background: #eef2f7;
+  color: #334155;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.tombol-tutup-modal:hover {
+  background: #dde5f0;
+  transform: scale(1.05);
+}
+
+/* Daftar jadwal di dalam modal detail */
+.daftar-jadwal-detail {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* Tombol tambah jadwal di dalam modal detail */
+.tombol-tambah-di-modal {
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed var(--warna-garis);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--warna-teks-lembut);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.tombol-tambah-di-modal:hover {
+  border-color: var(--warna-utama);
+  color: var(--warna-utama);
+  background: var(--warna-kartu-lembut);
+}
+
+/* ================================
+   DARK MODE - SEMUA PERUBAHAN WARNA
+================================ */
+body.mode-gelap {
+  --warna-latar: #0f1729;
+  --warna-kartu: #1a2540;
+  --warna-kartu-transparan: rgba(26, 37, 64, 0.88);
+  --warna-kartu-lembut: #1e2d4a;
+  --warna-teks: #e8edf8;
+  --warna-teks-lembut: #8896b0;
+  --warna-garis: #2a3650;
+  --bayangan-kartu: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --gradient-lembut: linear-gradient(135deg, #1a2540, #1e1e36);
 }
 
 body.mode-gelap {
-  --warna-latar: #121826;
-  --warna-kartu: #1b2537;
-  --warna-kartu-transparan: rgba(27, 37, 55, 0.86);
-  --warna-kartu-lembut: #263449;
-  --warna-teks: #f8fafc;
-  --warna-teks-lembut: #a9b4c7;
-  --warna-garis: #334155;
-  --bayangan-kartu: 0 18px 40px rgba(0, 0, 0, 0.2);
-}
-
-body.mode-gelap {
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
-    linear-gradient(180deg, #111827 0%, var(--warna-latar) 48%);
+  background: linear-gradient(135deg, #0a0f1e 0%, #0f1729 50%, #0a1020 100%);
 }
 
 body.mode-gelap input,
 body.mode-gelap select {
-  background: #111827;
+  background: #0f1729;
 }
 
 body.mode-gelap .foto-profil-header,
 body.mode-gelap .preview-foto-profil {
-  background: #1d2b47;
+  background: #1e2d4a;
 }
 
 body.mode-gelap .preview-foto-profil {
-  border-color: #263449;
+  border-color: #2a3650;
 }
 
 body.mode-gelap .pesan-error-foto.tampil {
@@ -898,91 +1176,125 @@ body.mode-gelap .pesan-error-foto.tampil {
 
 body.mode-gelap .tombol-kedua,
 body.mode-gelap .tombol-ikon,
-body.mode-gelap .tombol-modal-kedua {
-  background: #263449;
-  color: #e2e8f0;
+body.mode-gelap .tombol-modal-kedua,
+body.mode-gelap .tombol-tutup-modal {
+  background: #1e2d4a;
+  color: #c5cfe0;
 }
 
 body.mode-gelap .tombol-kedua:hover,
 body.mode-gelap .tombol-ikon:hover,
-body.mode-gelap .tombol-modal-kedua:hover {
-  background: #334155;
+body.mode-gelap .tombol-modal-kedua:hover,
+body.mode-gelap .tombol-tutup-modal:hover {
+  background: #2a3650;
 }
 
 body.mode-gelap .tombol-hapus {
   background: #3a1d24;
+  color: #f87171;
+}
+
+body.mode-gelap .tombol-hapus-jadwal {
+  background: #3a1d24;
+  color: #f87171;
 }
 
 body.mode-gelap .modal-konfirmasi,
-body.mode-gelap .modal-jadwal {
-  border-color: #334155;
+body.mode-gelap .modal-jadwal,
+body.mode-gelap .modal-detail-jadwal {
+  border-color: #2a3650;
 }
 
-body.mode-gelap .nama-hari-kalender,
-body.mode-gelap .tanggal-luar-bulan {
+body.mode-gelap .nama-hari-kalender {
   background: #111827;
 }
 
-body.mode-gelap .kotak-tanggal {
-  background: rgba(27, 37, 55, 0.72);
+body.mode-gelap .tanggal-luar-bulan {
+  background: #111827;
+  color: #4a5568;
 }
 
+body.mode-gelap .kotak-tanggal {
+  background: rgba(26, 37, 64, 0.65);
+}
+
+body.mode-gelap .kotak-tanggal:hover {
+  background: var(--warna-kartu-lembut);
+}
+
+body.mode-gelap .tombol-tambah-di-modal {
+  border-color: #2a3650;
+  color: #6b7694;
+}
+
+body.mode-gelap .tombol-tambah-di-modal:hover {
+  border-color: var(--warna-utama);
+  color: var(--warna-utama);
+}
+
+/* ================================
+   FLOATING ACTION BUTTON (MOBILE)
+================================ */
 .tombol-tambah-cepat {
   position: fixed;
-  right: 22px;
+  right: 20px;
   bottom: 22px;
   z-index: 35;
   display: none;
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: var(--gradient-utama);
-  color: #ffffff;
+  color: #fff;
   box-shadow: var(--bayangan-melayang);
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tombol-tambah-cepat:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-3px) scale(1.04);
 }
 
+/* ================================
+   TOAST / NOTIFIKASI KECIL
+================================ */
 .wadah-toast {
   position: fixed;
-  right: 22px;
-  bottom: 96px;
+  right: 20px;
+  bottom: 90px;
   z-index: 60;
   display: grid;
-  gap: 10px;
-  width: min(340px, calc(100% - 44px));
+  gap: 8px;
+  width: min(320px, calc(100% - 40px));
   pointer-events: none;
 }
 
 .toast {
-  padding: 13px 15px;
+  padding: 12px 16px;
   border: 1px solid var(--warna-garis);
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--warna-kartu-transparan);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(16px);
   color: var(--warna-teks);
   box-shadow: var(--bayangan-melayang);
   font-size: 14px;
-  animation: animasiToastMasuk 0.22s ease;
+  font-weight: 600;
+  animation: toastMasuk 0.22s ease;
   transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
 .toast-keluar {
   opacity: 0;
-  transform: translateY(10px) scale(0.98);
+  transform: translateY(8px) scale(0.97);
 }
 
-@keyframes animasiToastMasuk {
+@keyframes toastMasuk {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(10px) scale(0.97);
   }
   to {
     opacity: 1;
@@ -990,6 +1302,95 @@ body.mode-gelap .kotak-tanggal {
   }
 }
 
+/* ================================
+   BOTTOM NAVIGATION MOBILE
+   Navbar bawah untuk layar kecil
+================================ */
+.bottom-navigation-mobile {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 500px;
+
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 8px 10px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(79, 110, 247, 0.12), 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 999;
+}
+
+body.mode-gelap .bottom-navigation-mobile {
+  background: rgba(26, 37, 64, 0.92);
+  border-color: rgba(42, 54, 80, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.tombol-nav-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  color: var(--warna-teks-lembut);
+  padding: 7px 12px;
+  border-radius: 14px;
+  transition: 0.25s ease;
+  min-width: 60px;
+}
+
+.tombol-nav-mobile span {
+  font-size: 20px;
+}
+
+.tombol-nav-mobile small {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tombol-nav-mobile.aktif {
+  background: var(--warna-kartu-lembut);
+  color: var(--warna-utama);
+}
+
+/* ================================
+   FLOATING BUTTON MOBILE
+================================ */
+.tombol-tambah-mobile {
+  position: fixed;
+  right: 18px;
+  bottom: 84px;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gradient-utama);
+  color: #fff;
+  font-size: 30px;
+  font-weight: bold;
+  box-shadow: 0 8px 28px rgba(79, 110, 247, 0.4);
+  z-index: 999;
+  display: none;
+  transition: 0.25s;
+  align-items: center;
+  justify-content: center;
+}
+
+.tombol-tambah-mobile:hover {
+  transform: scale(1.08);
+}
+
+/* ================================
+   RESPONSIF TABLET (1024px ke bawah)
+================================ */
 @media (max-width: 1024px) {
   .grid-statistik,
   .grid-konten,
@@ -1006,169 +1407,128 @@ body.mode-gelap .kotak-tanggal {
   }
 }
 
-@media (max-width: 760px) {
-  .wadah-aplikasi {
-    display: block;
-  }
+/* ================================
+   RESPONSIF MOBILE (768px ke bawah)
+   Ini yang penting buat tampilan HP
+================================ */
+@media (max-width: 768px) {
 
+  /* Sembunyikan sidebar di mobile, pakai bottom nav */
   .menu-samping {
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    top: auto;
-    z-index: 30;
-    width: 100%;
-    height: auto;
-    width: auto;
-    padding: 8px;
-    border: 1px solid var(--warna-garis);
-    border-radius: 24px;
-    box-shadow: var(--bayangan-melayang);
-  }
-
-  .identitas-aplikasi {
     display: none;
-  }
-
-  .daftar-menu {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
-  }
-
-  .tombol-menu {
-    min-height: 54px;
-    padding: 8px 6px;
-    border-radius: 18px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 800;
-  }
-
-  .tombol-menu:hover,
-  .tombol-menu.aktif {
-    transform: none;
   }
 
   .konten-utama {
     width: 100%;
-    padding: 18px 16px 108px;
+    padding: 16px 14px;
+    padding-bottom: 110px; /* jarak dari bottom nav */
   }
 
-  .kepala-halaman {
-    align-items: flex-start;
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    margin: -18px -16px 18px;
-    padding: 16px;
-    background: rgba(246, 248, 252, 0.82);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  /* Tampilkan navbar bawah dan floating button */
+  .bottom-navigation-mobile {
+    display: flex;
   }
 
-  .kepala-halaman h1 {
-    font-size: 22px;
+  .tombol-tambah-mobile {
+    display: flex;
   }
 
-  .pengaturan-profil {
-    align-items: flex-start;
-    flex-direction: column;
+  /* Statistik jadi 2 kolom di mobile */
+  .grid-statistik {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
-  .grid-statistik,
   .grid-konten,
   .grid-pengaturan,
-  .form-tugas,
-  .alat-filter-tugas,
-  .baris-form {
+  .layout-kalender {
     grid-template-columns: 1fr;
   }
 
-  .grid-statistik {
-    gap: 12px;
+  .form-tugas,
+  .alat-filter-tugas {
+    grid-template-columns: 1fr;
   }
 
-  .kartu-statistik,
-  .panel,
-  .item-tugas,
+  .kepala-halaman h1 {
+    font-size: 20px;
+  }
+
+  .toolbar-kalender {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Kalender scroll horizontal supaya tidak terpotong */
   .kartu-kalender {
-    border-radius: 22px;
+    overflow: visible;
   }
 
-  .form-tugas {
-    border-radius: 22px;
-    padding: 14px;
+  .kalender-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0 0 var(--radius-kartu) var(--radius-kartu);
   }
 
-  .tombol-utama,
-  .tombol-kedua,
-  .tombol-bahaya {
-    width: 100%;
+  /* Kalender punya lebar minimal supaya tidak gepeng */
+  .nama-hari-kalender,
+  .isi-kalender {
+    min-width: 560px;
+  }
+
+  .kotak-tanggal {
+    min-height: 80px;
+    padding: 5px;
+  }
+
+  .angka-tanggal {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .label-jadwal {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .pengaturan-profil {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .judul-bagian,
-  .toolbar-kalender,
   .filter-kalender {
-    align-items: stretch;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .aksi-kalender {
     display: grid;
-    grid-template-columns: 42px 1fr 42px;
+    grid-template-columns: 44px 1fr 44px;
+    width: 100%;
   }
 
   .filter-kalender select {
-    max-width: none;
-  }
-
-  .nama-hari-kalender span {
-    padding: 10px 4px;
-    font-size: 11px;
-  }
-
-  .kotak-tanggal {
-    min-height: 92px;
-    padding: 6px;
-  }
-
-  .label-jadwal {
-    padding: 4px 5px;
-    font-size: 11px;
-  }
-
-  .tombol-tambah-cepat {
-    display: grid;
-    place-items: center;
-    right: 18px;
-    bottom: 92px;
-  }
-
-  .wadah-toast {
-    right: 16px;
-    bottom: 164px;
-    width: calc(100% - 32px);
-  }
-
-  body.mode-gelap .kepala-halaman {
-    background: rgba(18, 24, 38, 0.82);
-    border-bottom-color: rgba(51, 65, 85, 0.72);
+    max-width: 100%;
+    width: 100%;
   }
 
   .item-tugas,
   .item-kalender {
-    align-items: stretch;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .aksi-tugas {
     justify-content: flex-end;
+    width: 100%;
   }
 
   .modal-konfirmasi,
-  .modal-jadwal {
-    padding: 20px;
+  .modal-jadwal,
+  .modal-detail-jadwal {
+    padding: 18px 16px;
   }
 
   .aksi-modal {
@@ -1178,203 +1538,48 @@ body.mode-gelap .kotak-tanggal {
   .tombol-modal {
     width: 100%;
   }
+
+  .tombol-utama,
+  .tombol-kedua,
+  .tombol-bahaya {
+    width: 100%;
+  }
 }
 
-@media (max-width: 430px) {
-  .daftar-menu {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+/* ================================
+   RESPONSIF LAYAR SANGAT KECIL (480px ke bawah)
+================================ */
+@media (max-width: 480px) {
 
-  .foto-profil-header {
-    width: 40px;
-    height: 40px;
-  }
-
-  .grid-statistik {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .konten-utama {
+    padding: 12px 12px;
+    padding-bottom: 110px;
   }
 
   .kartu-statistik {
-    padding: 16px;
+    padding: 14px 16px;
   }
 
   .kartu-statistik p {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .kartu-statistik h3 {
-    font-size: 28px;
-  }
-
-  .isi-kalender {
-    overflow-x: auto;
+    font-size: 24px;
   }
 
   .nama-hari-kalender,
   .isi-kalender {
-    min-width: 620px;
-  }
-}
-
-/* ================================
-BOTTOM NAVIGATION MOBILE
-================================ */
-
-.bottom-navigation-mobile {
-  position: fixed;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 500px;
-
-  display: none;
-  justify-content: space-around;
-  align-items: center;
-
-  padding: 10px;
-
-  border-radius: 24px;
-
-  background: rgba(255,255,255,0.75);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255,255,255,0.3);
-
-  box-shadow: 0 10px 35px rgba(0,0,0,0.12);
-
-  z-index: 999;
-}
-
-.tombol-nav-mobile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-
-  border: none;
-  background: transparent;
-
-  color: #64748b;
-
-  padding: 8px 12px;
-
-  border-radius: 14px;
-
-  transition: 0.3s;
-}
-
-.tombol-nav-mobile span {
-  font-size: 20px;
-}
-
-.tombol-nav-mobile small {
-  font-size: 11px;
-}
-
-.tombol-nav-mobile.aktif {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-/* ================================
-FLOATING BUTTON
-================================ */
-
-.tombol-tambah-mobile {
-  position: fixed;
-
-  right: 20px;
-  bottom: 90px;
-
-  width: 60px;
-  height: 60px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: linear-gradient(135deg,#3b82f6,#06b6d4);
-
-  color: white;
-
-  font-size: 32px;
-  font-weight: bold;
-
-  box-shadow: 0 15px 35px rgba(59,130,246,0.4);
-
-  z-index: 999;
-
-  display: none;
-
-  transition: 0.3s;
-}
-
-.tombol-tambah-mobile:hover {
-  transform: scale(1.08);
-}
-
-/* ================================
-MOBILE RESPONSIVE
-================================ */
-
-@media (max-width: 768px) {
-
-  .menu-samping {
-    display: none;
+    min-width: 490px;
   }
 
-  .konten-utama {
-    width: 100%;
-    padding: 18px;
-    padding-bottom: 120px;
-  }
-
-  .bottom-navigation-mobile {
-    display: flex;
-  }
-
-  .tombol-tambah-mobile {
-    display: block;
-  }
-
-  .grid-statistik {
-    grid-template-columns: repeat(2,1fr);
-  }
-
-  .grid-konten,
-  .grid-pengaturan,
-  .layout-kalender {
-    grid-template-columns: 1fr;
-  }
-
-  .form-tugas {
-    grid-template-columns: 1fr;
-  }
-
-  .alat-filter-tugas {
-    grid-template-columns: 1fr;
-  }
-
-  .kepala-halaman {
-    align-items: flex-start;
-  }
-
-  .kepala-halaman h1 {
-    font-size: 24px;
-  }
-
-  .toolbar-kalender {
-    flex-direction: column;
-    align-items: flex-start;
+  .nama-hari-kalender span {
+    font-size: 10px;
+    padding: 8px 3px;
   }
 
   .kotak-tanggal {
-    min-height: 90px;
-    padding: 6px;
+    min-height: 70px;
+    padding: 4px;
   }
-
-  .label-jadwal {
-    font-size: 10px;
-  }
-
 }
