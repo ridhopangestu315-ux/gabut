@@ -1509,7 +1509,25 @@ Menangani konfirmasi dan penghapusan jadwal manual.
   4. Kalau batal: tidak ada yang berubah
 */
 async function hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal) {
-  // Tanyakan konfirmasi dulu sebelum menghapus
+
+  // -------------------------------------------------------
+  // LANGKAH 1: Tutup modal detail tanggal lebih dulu
+  // -------------------------------------------------------
+  // Ini mencegah modal detail dan modal konfirmasi tampil
+  // bersamaan dan saling bertabrakan.
+  // Kita tutup dulu, tunggu animasi selesai, baru buka konfirmasi.
+  tutupModalDetailTanggal();
+
+  // Tunggu animasi tutup modal detail selesai
+  // 300ms adalah waktu aman agar animasi tidak terputus
+  await new Promise(function (selesai) {
+    setTimeout(selesai, 300);
+  });
+
+  // -------------------------------------------------------
+  // LANGKAH 2: Tampilkan modal konfirmasi
+  // -------------------------------------------------------
+  // Modal detail sudah tertutup, aman untuk membuka konfirmasi
   const userSetuju = await bukaModalKonfirmasi({
     judul: "Hapus jadwal?",
     pesan: '"' + namaJadwal + '" akan dihapus permanen dari kalender.',
@@ -1522,13 +1540,16 @@ async function hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal) {
     return;
   }
 
-  // Hapus jadwal dari data dan simpan ke localStorage
+  // -------------------------------------------------------
+  // LANGKAH 3: Hapus data dan refresh semua tampilan
+  // -------------------------------------------------------
+  // Hapus jadwal dari array dan simpan ke localStorage
   hapusJadwalDariData(idJadwal);
 
-  // Refresh seluruh tampilan kalender (kotak tanggal + agenda + reminder)
+  // Refresh kalender: kotak tanggal + agenda hari ini + reminder deadline
   tampilkanKalender();
 
-  // Tampilkan notifikasi berhasil
+  // Tampilkan notifikasi berhasil ke user
   tampilkanToast("Jadwal berhasil dihapus.");
 }
 
@@ -1553,38 +1574,48 @@ function pasangSemuaEventListener() {
 
 });
 
-document
-  .getElementById("daftarJadwalDetailTanggal")
-  .addEventListener("click", function (event) {
+  // ================================
+  // EVENT DELEGATION: HAPUS JADWAL DI MODAL DETAIL TANGGAL
+  // ================================
+  // Listener dipasang di wadah daftar jadwal di dalam modal detail.
+  // Menggunakan event delegation agar tombol hapus dari semua item
+  // tertangani oleh satu listener yang sama.
+  document
+    .getElementById("daftarJadwalDetailTanggal")
+    .addEventListener("click", function (event) {
 
-    // Cari tombol hapus yang diklik
-    const tombolHapus =
-      event.target.closest(".tombol-hapus-jadwal");
+      // Cari tombol hapus jadwal yang diklik menggunakan closest()
+      // Ini bekerja meski user klik teks atau ikon di dalam tombol
+      const tombolHapus = event.target.closest(".tombol-hapus-jadwal");
 
-    // Kalau bukan tombol hapus → berhenti
-    if (!tombolHapus) {
-      return;
-    }
+      // Kalau yang diklik bukan tombol hapus, abaikan
+      if (!tombolHapus) {
+        return;
+      }
 
-    // Ambil ID jadwal
-    const idJadwal =
-      tombolHapus.dataset.idJadwal;
+      // PENTING: Hentikan event bubbling agar klik tombol hapus
+      // tidak naik ke listener backdrop modal yang ada di atasnya.
+      // Tanpa ini, klik tombol hapus juga dianggap klik backdrop
+      // sehingga modal langsung tertutup sebelum proses hapus jalan.
+      event.stopPropagation();
 
-    // Cari item agenda terdekat
-    const itemAgenda =
-      tombolHapus.closest(".item-agenda");
+      // Ambil ID jadwal dari atribut data pada tombol
+      const idJadwal = tombolHapus.dataset.idJadwal;
 
-    // Ambil nama jadwal
-    const namaJadwal =
-      itemAgenda.querySelector("strong").textContent;
+      // Cari nama jadwal dari elemen <strong> terdekat untuk ditampilkan di konfirmasi
+      const itemAgenda = tombolHapus.closest(".item-agenda");
+      const namaJadwal = itemAgenda
+        ? itemAgenda.querySelector("strong").textContent
+        : "Jadwal ini";
 
-    // Jalankan hapus
-    hapusJadwalDenganKonfirmasi(
-      idJadwal,
-      namaJadwal
-    );
+      // Jalankan proses hapus:
+      // 1. Tutup modal detail
+      // 2. Tunggu animasi
+      // 3. Buka modal konfirmasi
+      // 4. Kalau setuju: hapus data, refresh UI, tampilkan toast
+      hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal);
 
-});
+    });
 
   elemenHalaman.formTambahTugas.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -1758,7 +1789,14 @@ document
   // Satu listener di wadah agenda, menangani klik tombol hapus dari semua item jadwal.
   // Event delegation dipilih karena isi agenda dirender ulang setiap kali kalender di-refresh.
   // Dengan pola ini, listener tidak perlu dipasang ulang setelah render.
+  // ================================
+  // EVENT DELEGATION: HAPUS JADWAL DI AGENDA HARI INI
+  // ================================
+  // Satu listener di wadah agenda, menangani klik tombol hapus dari semua item jadwal.
+  // Event delegation dipilih karena isi agenda dirender ulang setiap kali kalender di-refresh.
+  // Dengan pola ini, listener tidak perlu dipasang ulang setelah render.
   elemenHalaman.daftarAgendaHariIni.addEventListener("click", function (event) {
+
     // Cari tombol hapus jadwal yang diklik
     const tombolHapus = event.target.closest(".tombol-hapus-jadwal");
 
@@ -1767,15 +1805,19 @@ document
       return;
     }
 
+    // PENTING: Hentikan event bubbling agar tidak bocor ke listener parent
+    event.stopPropagation();
+
     // Ambil ID jadwal dari atribut data pada tombol
     const idJadwal = tombolHapus.dataset.idJadwal;
 
-    // Cari nama jadwal dari item agenda terdekat untuk ditampilkan di modal
+    // Cari nama jadwal dari item agenda terdekat untuk ditampilkan di modal konfirmasi
     const itemAgenda = tombolHapus.closest(".item-agenda");
     const namaJadwal = itemAgenda ? itemAgenda.querySelector("strong").textContent : "Jadwal ini";
 
     // Panggil fungsi hapus dengan konfirmasi
     hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal);
+
   });
 
   // ================================
@@ -1813,18 +1855,27 @@ document
     }
   });
 
+  // ================================
+  // LISTENER BACKDROP MODAL DETAIL TANGGAL
+  // ================================
+  // Klik area hitam di luar modal → tutup modal.
+  // stopPropagation() dipasang agar klik backdrop tidak
+  // bocor ke listener lain yang mungkin ada di atasnya.
   document
-  .getElementById("modalDetailTanggal")
-  .addEventListener("click", function (event) {
+    .getElementById("modalDetailTanggal")
+    .addEventListener("click", function (event) {
 
-    // Kalau user klik area hitam luar modal
-    if (event.target.id === "modalDetailTanggal") {
+      // Kalau user klik area hitam di luar konten modal (backdrop)
+      if (event.target.id === "modalDetailTanggal") {
 
-      tutupModalDetailTanggal();
+        // Hentikan event agar tidak naik ke listener parent
+        event.stopPropagation();
 
-    }
+        tutupModalDetailTanggal();
 
-});
+      }
+
+    });
 
   elemenHalaman.modalJadwal.addEventListener("click", function (event) {
     if (event.target === elemenHalaman.modalJadwal) {
