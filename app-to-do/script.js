@@ -833,6 +833,13 @@ function tampilkanDetailTanggal(kodeTanggal) {
   const daftarJadwal =
     document.getElementById("daftarJadwalDetailTanggal");
 
+  // -------------------------------------------------------
+  // SIMPAN TANGGAL YANG SEDANG DIBUKA
+  // -------------------------------------------------------
+  // Disimpan ke dataAplikasi agar tombol "+ Tambah jadwal di tanggal ini"
+  // bisa tahu tanggal mana yang sedang aktif saat tombol ditekan.
+  dataAplikasi.tanggalDetailYangSedangDibuka = kodeTanggal;
+
   // Ambil semua item kalender di tanggal tersebut
   const daftarItem =
     ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
@@ -1567,12 +1574,38 @@ function pasangSemuaEventListener() {
   });
 
   document
-  .getElementById("tombolTutupDetailTanggal")
-  .addEventListener("click", function () {
+    .getElementById("tombolTutupDetailTanggal")
+    .addEventListener("click", function () {
+      tutupModalDetailTanggal();
+    });
 
-    tutupModalDetailTanggal();
+  // ================================
+  // LISTENER TOMBOL TAMBAH JADWAL DARI MODAL DETAIL
+  // ================================
+  // Saat user klik "+ Tambah jadwal di tanggal ini":
+  // 1. Ambil tanggal yang sedang dibuka dari dataAplikasi
+  // 2. Tutup modal detail lebih dulu
+  // 3. Tunggu animasi tutup selesai (300ms)
+  // 4. Buka modal tambah jadwal dengan tanggal sudah terisi otomatis
+  document
+    .getElementById("tombolTambahJadwalDariDetail")
+    .addEventListener("click", function () {
 
-});
+      // Ambil tanggal yang sedang aktif di modal detail
+      const tanggalYangDipilih = dataAplikasi.tanggalDetailYangSedangDibuka;
+
+      // Tutup modal detail dulu agar tidak bertabrakan dengan modal jadwal
+      tutupModalDetailTanggal();
+
+      // Tunggu animasi tutup selesai sebelum buka modal tambah jadwal
+      setTimeout(function () {
+
+        // Buka modal tambah jadwal — tanggal otomatis terisi sesuai tanggal tadi
+        bukaModalTambahJadwal(tanggalYangDipilih);
+
+      }, 300);
+
+    });
 
   // ================================
   // EVENT DELEGATION: HAPUS JADWAL DI MODAL DETAIL TANGGAL
@@ -1736,6 +1769,24 @@ function pasangSemuaEventListener() {
     tutupModalTambahJadwal();
     tampilkanKalender();
     tampilkanToast("Jadwal baru berhasil disimpan.");
+
+    // -------------------------------------------------------
+    // BUKA KEMBALI MODAL DETAIL SETELAH JADWAL DITAMBAH
+    // -------------------------------------------------------
+    // Kalau jadwal baru ditambahkan dari tombol di modal detail,
+    // kita buka ulang modal detail tanggal itu agar user langsung
+    // bisa melihat jadwal baru yang baru saja ditambahkan.
+    // Cek: apakah tanggal jadwal baru sama dengan tanggal detail yang tadi dibuka?
+    const tanggalDetailSebelumnya = dataAplikasi.tanggalDetailYangSedangDibuka;
+
+    if (tanggalDetailSebelumnya && tanggalDetailSebelumnya === hasilValidasi.tanggalJadwal) {
+
+      // Tunggu animasi modal jadwal tutup dulu, baru buka detail
+      setTimeout(function () {
+        tampilkanDetailTanggal(tanggalDetailSebelumnya);
+      }, 300);
+
+    }
   });
 
   elemenHalaman.tombolSimpanNama.addEventListener("click", simpanNamaPengguna);
