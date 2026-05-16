@@ -816,6 +816,81 @@ function buatHtmlItemAgenda(itemKalender) {
 
 /*
 ================================
+MODAL DETAIL TANGGAL
+================================
+Modal ini dipakai untuk melihat
+semua jadwal dalam 1 tanggal.
+*/
+
+function tampilkanDetailTanggal(kodeTanggal) {
+
+  // Ambil elemen modal
+  const modal = document.getElementById("modalDetailTanggal");
+
+  const judulModal =
+    document.getElementById("judulModalDetail");
+
+  const daftarJadwal =
+    document.getElementById("daftarJadwalDetailTanggal");
+
+  // Ambil semua item kalender di tanggal tersebut
+  const daftarItem =
+    ambilItemKalenderBerdasarkanTanggal(kodeTanggal);
+
+  // Ubah judul tanggal
+  judulModal.textContent =
+    formatTanggalIndonesia(kodeTanggal);
+
+  // Kalau tidak ada jadwal
+  if (daftarItem.length === 0) {
+
+    daftarJadwal.innerHTML = `
+      <div class="kotak-kosong">
+        Tidak ada jadwal di tanggal ini.
+      </div>
+    `;
+
+  } else {
+
+    // Tampilkan semua jadwal
+    daftarJadwal.innerHTML =
+      daftarItem.map(function (itemKalender) {
+
+        return buatHtmlItemAgenda(itemKalender);
+
+      }).join("");
+  }
+
+  // Tampilkan modal
+  modal.classList.add("tampil");
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+}
+
+/*
+================================
+TUTUP MODAL DETAIL
+================================
+*/
+
+function tutupModalDetailTanggal() {
+
+  const modal =
+    document.getElementById("modalDetailTanggal");
+
+  modal.classList.remove("tampil");
+
+  modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+}
+
+/*
+================================
 FUNGSI TAMPILKAN SEMUA DATA
 ================================
 Function ini dipanggil setelah data berubah.
@@ -1470,6 +1545,47 @@ function pasangSemuaEventListener() {
     });
   });
 
+  document
+  .getElementById("tombolTutupDetailTanggal")
+  .addEventListener("click", function () {
+
+    tutupModalDetailTanggal();
+
+});
+
+document
+  .getElementById("daftarJadwalDetailTanggal")
+  .addEventListener("click", function (event) {
+
+    // Cari tombol hapus yang diklik
+    const tombolHapus =
+      event.target.closest(".tombol-hapus-jadwal");
+
+    // Kalau bukan tombol hapus → berhenti
+    if (!tombolHapus) {
+      return;
+    }
+
+    // Ambil ID jadwal
+    const idJadwal =
+      tombolHapus.dataset.idJadwal;
+
+    // Cari item agenda terdekat
+    const itemAgenda =
+      tombolHapus.closest(".item-agenda");
+
+    // Ambil nama jadwal
+    const namaJadwal =
+      itemAgenda.querySelector("strong").textContent;
+
+    // Jalankan hapus
+    hapusJadwalDenganKonfirmasi(
+      idJadwal,
+      namaJadwal
+    );
+
+});
+
   elemenHalaman.formTambahTugas.addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -1554,13 +1670,19 @@ function pasangSemuaEventListener() {
   });
 
   elemenHalaman.isiKalender.addEventListener("click", function (event) {
-    const kotakTanggal = event.target.closest(".kotak-tanggal");
 
-    if (!kotakTanggal) {
-      return;
-    }
+  const kotakTanggal = event.target.closest(".kotak-tanggal");
 
-    bukaModalTambahJadwal(kotakTanggal.dataset.tanggal);
+  if (!kotakTanggal) {
+    return;
+  }
+
+  // Ambil tanggal dari kotak kalender
+  const kodeTanggal = kotakTanggal.dataset.tanggal;
+
+  // Buka modal detail tanggal
+  tampilkanDetailTanggal(kodeTanggal);
+
   });
 
   elemenHalaman.formTambahJadwal.addEventListener("submit", function (event) {
@@ -1691,6 +1813,19 @@ function pasangSemuaEventListener() {
     }
   });
 
+  document
+  .getElementById("modalDetailTanggal")
+  .addEventListener("click", function (event) {
+
+    // Kalau user klik area hitam luar modal
+    if (event.target.id === "modalDetailTanggal") {
+
+      tutupModalDetailTanggal();
+
+    }
+
+});
+
   elemenHalaman.modalJadwal.addEventListener("click", function (event) {
     if (event.target === elemenHalaman.modalJadwal) {
       tutupModalTambahJadwal();
@@ -1701,6 +1836,7 @@ function pasangSemuaEventListener() {
     if (event.key === "Escape") {
       tutupModalKonfirmasi(false);
       tutupModalTambahJadwal();
+      tutupModalDetailTanggal();
     }
   });
 }
