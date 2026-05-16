@@ -862,6 +862,16 @@ select:focus {
   font-size: 12px;
 }
 
+/*
+  FITUR BARU: Wrapper teks di dalam item agenda.
+  Dipakai agar teks (nama + keterangan) dan tombol hapus
+  bisa berdampingan dengan layout flex yang rapi.
+*/
+.isi-item-agenda {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Tombol hapus jadwal di samping item agenda */
 .tombol-hapus-jadwal {
   flex-shrink: 0;
@@ -1734,4 +1744,3 @@ body.mode-gelap .bottom-navigation-mobile {
     padding: 4px;
   }
 }
-

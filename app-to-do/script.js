@@ -450,6 +450,23 @@ function tambahJadwalKeData(dataJadwalBaru) {
   simpanDaftarJadwal();
 }
 
+/*
+  hapusJadwalDariData(idJadwal)
+  --------------------------------
+  FITUR BARU: Menghapus satu jadwal manual dari daftar berdasarkan ID-nya.
+  Hanya jadwal manual yang bisa dihapus (tipe "jadwal").
+  Deadline tugas tidak bisa dihapus dari sini - harus dari halaman Tugas.
+*/
+function hapusJadwalDariData(idJadwal) {
+  // Saring: simpan semua jadwal KECUALI yang ID-nya cocok
+  dataAplikasi.daftarSemuaJadwal = dataAplikasi.daftarSemuaJadwal.filter(function (jadwal) {
+    return jadwal.id !== idJadwal;
+  });
+
+  // Simpan perubahan ke localStorage
+  simpanDaftarJadwal();
+}
+
 function ambilSemuaItemKalender() {
   const daftarJadwalManual = dataAplikasi.daftarSemuaJadwal.map(function (jadwal) {
     return {
@@ -772,10 +789,27 @@ function buatHtmlItemAgenda(itemKalender) {
     teksKeterangan = `${itemKalender.mataKuliah || "Tugas"} - ${buatTeksSisaDeadline(itemKalender.tanggal)}`;
   }
 
+  /*
+    FITUR BARU: Tombol hapus hanya muncul untuk jadwal manual (tipe "jadwal").
+    Deadline tugas tidak bisa dihapus dari kalender - harus dari halaman Tugas.
+    data-id-jadwal dipakai oleh event delegation untuk tahu jadwal mana yang dihapus.
+  */
+  const htmlTombolHapus = itemKalender.tipe === "jadwal"
+    ? `<button
+         class="tombol-hapus-jadwal"
+         type="button"
+         data-id-jadwal="${amankanTeksUntukHtml(itemKalender.id)}"
+         aria-label="Hapus jadwal ${amankanTeksUntukHtml(itemKalender.judul)}"
+       >&#x1F5D1;</button>`
+    : "";
+
   return `
     <article class="item-agenda kategori-${itemKalender.kategori}">
-      <strong>${amankanTeksUntukHtml(itemKalender.judul)}</strong>
-      <p>${formatTanggalIndonesia(itemKalender.tanggal)} - ${amankanTeksUntukHtml(teksKeterangan)}</p>
+      <div class="isi-item-agenda">
+        <strong>${amankanTeksUntukHtml(itemKalender.judul)}</strong>
+        <p>${formatTanggalIndonesia(itemKalender.tanggal)} - ${amankanTeksUntukHtml(teksKeterangan)}</p>
+      </div>
+      ${htmlTombolHapus}
     </article>
   `;
 }
@@ -990,14 +1024,42 @@ function bukaModalKonfirmasi(pengaturanModal) {
   });
 }
 
+/*
+  tutupModalKonfirmasi(jawabanUser)
+  ----------------------------------
+  PERBAIKAN BUG 1:
+  
+  MASALAH SEBELUMNYA:
+  Fungsi ini punya guard "if modal tidak tampil, return lebih awal".
+  Akibatnya, kalau fungsi dipanggil dua kali (misal: user klik Batal,
+  lalu Escape juga terpicu), pemanggilan kedua langsung return —
+  padahal fungsiJawabanModalKonfirmasi belum di-null-kan dengan benar.
+  
+  Tapi bug utama ada di tampilkanDaftarMataKuliahDiPengaturan():
+  Di sana, event listener dipasang di DALAM fungsi render, lalu
+  langsung dihapus setelah sekali klik. Jadi setelah user hapus
+  satu mata kuliah, render ulang → listener baru dipasang → klik
+  tombol hapus → modal muncul → klik Batal → listener dihapus oleh
+  removeEventListener → render berikutnya tidak bisa klik lagi!
+  
+  SOLUSI:
+  1. Pindahkan event listener daftarMataKuliahPengaturan ke pasangSemuaEventListener()
+     menggunakan event delegation yang benar (tidak pakai removeEventListener).
+  2. Pastikan tutupModalKonfirmasi SELALU memanggil fungsiJawabanModal
+     meski modal tidak sedang tampil, agar Promise tidak menggantung.
+*/
 function tutupModalKonfirmasi(jawabanUser) {
-  if (!elemenHalaman.modalKonfirmasi.classList.contains("tampil")) {
-    return;
+  // Sembunyikan modal jika sedang tampil
+  if (elemenHalaman.modalKonfirmasi.classList.contains("tampil")) {
+    elemenHalaman.modalKonfirmasi.classList.remove("tampil");
+    elemenHalaman.modalKonfirmasi.setAttribute("aria-hidden", "true");
   }
 
-  elemenHalaman.modalKonfirmasi.classList.remove("tampil");
-  elemenHalaman.modalKonfirmasi.setAttribute("aria-hidden", "true");
-
+  /*
+    KUNCI PERBAIKAN: Selalu resolve Promise, tidak peduli apakah
+    modal tadi tampil atau tidak. Ini mencegah Promise menggantung
+    (hanging promise) yang menyebabkan tombol hapus berikutnya mati.
+  */
   if (fungsiJawabanModalKonfirmasi) {
     fungsiJawabanModalKonfirmasi(jawabanUser);
     fungsiJawabanModalKonfirmasi = null;
@@ -1344,26 +1406,55 @@ function tampilkanDaftarMataKuliahDiPengaturan() {
     `;
   }).join("");
 
-  wadahDaftar.innerHTML = htmlDaftarMataKuliah;
-
   /*
-    Pasang event listener dengan event delegation.
-    Satu listener di wadah, bukan satu listener per tombol.
-    Lebih efisien dan tidak perlu dipasang ulang tiap render.
+    PERBAIKAN BUG 1 (bagian mata kuliah):
+    Listener TIDAK lagi dipasang di sini.
+    Listener sudah dipindah ke pasangSemuaEventListener() di bawah,
+    menggunakan event delegation yang benar dan tidak pernah dihapus.
+    Fungsi ini sekarang hanya mengurus tampilan HTML saja.
   */
-  wadahDaftar.addEventListener("click", function tanganiKlikDaftarMataKuliah(event) {
-    var tombolYangDiklik = event.target.closest(".tombol-hapus-mata-kuliah");
+  wadahDaftar.innerHTML = htmlDaftarMataKuliah;
+}
 
-    if (!tombolYangDiklik) {
-      return; // Bukan tombol hapus, abaikan
-    }
+/*
+================================
+FUNGSI HAPUS JADWAL (FITUR BARU)
+================================
+Menangani konfirmasi dan penghapusan jadwal manual.
+*/
 
-    var namaYangAkanDihapus = tombolYangDiklik.dataset.namaMataKuliah;
-    hapusMataKuliah(namaYangAkanDihapus);
-
-    // Hapus listener ini setelah digunakan agar tidak menumpuk saat render ulang
-    wadahDaftar.removeEventListener("click", tanganiKlikDaftarMataKuliah);
+/*
+  hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal)
+  --------------------------------------------------
+  Fungsi ini dipanggil saat user klik tombol hapus jadwal (ikon tempat sampah).
+  Urutan kerjanya:
+  1. Tampilkan modal konfirmasi dengan nama jadwal yang akan dihapus
+  2. Tunggu jawaban user (setuju atau batal)
+  3. Kalau setuju: hapus dari data, simpan, refresh tampilan, tampilkan toast
+  4. Kalau batal: tidak ada yang berubah
+*/
+async function hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal) {
+  // Tanyakan konfirmasi dulu sebelum menghapus
+  const userSetuju = await bukaModalKonfirmasi({
+    judul: "Hapus jadwal?",
+    pesan: '"' + namaJadwal + '" akan dihapus permanen dari kalender.',
+    teksSetuju: "Hapus",
+    teksBatal: "Batal"
   });
+
+  // Kalau user pilih Batal, berhenti di sini — tidak ada yang berubah
+  if (!userSetuju) {
+    return;
+  }
+
+  // Hapus jadwal dari data dan simpan ke localStorage
+  hapusJadwalDariData(idJadwal);
+
+  // Refresh seluruh tampilan kalender (kotak tanggal + agenda + reminder)
+  tampilkanKalender();
+
+  // Tampilkan notifikasi berhasil
+  tampilkanToast("Jadwal berhasil dihapus.");
 }
 
 /*
@@ -1539,6 +1630,53 @@ function pasangSemuaEventListener() {
     elemenHalaman.pesanErrorMataKuliahBaru.textContent = "";
     elemenHalaman.inputNamaMataKuliah.classList.remove("input-error");
   });
+  // ================================
+  // EVENT DELEGATION: HAPUS JADWAL DI AGENDA HARI INI (FITUR BARU)
+  // ================================
+  // Satu listener di wadah agenda, menangani klik tombol hapus dari semua item jadwal.
+  // Event delegation dipilih karena isi agenda dirender ulang setiap kali kalender di-refresh.
+  // Dengan pola ini, listener tidak perlu dipasang ulang setelah render.
+  elemenHalaman.daftarAgendaHariIni.addEventListener("click", function (event) {
+    // Cari tombol hapus jadwal yang diklik
+    const tombolHapus = event.target.closest(".tombol-hapus-jadwal");
+
+    // Kalau yang diklik bukan tombol hapus jadwal, abaikan
+    if (!tombolHapus) {
+      return;
+    }
+
+    // Ambil ID jadwal dari atribut data pada tombol
+    const idJadwal = tombolHapus.dataset.idJadwal;
+
+    // Cari nama jadwal dari item agenda terdekat untuk ditampilkan di modal
+    const itemAgenda = tombolHapus.closest(".item-agenda");
+    const namaJadwal = itemAgenda ? itemAgenda.querySelector("strong").textContent : "Jadwal ini";
+
+    // Panggil fungsi hapus dengan konfirmasi
+    hapusJadwalDenganKonfirmasi(idJadwal, namaJadwal);
+  });
+
+  // ================================
+  // EVENT DELEGATION: HAPUS MATA KULIAH DI PENGATURAN (PERBAIKAN BUG 1)
+  // ================================
+  // Listener dipasang SEKALI di sini, bukan di dalam fungsi render.
+  // Ini solusi utama Bug 1: listener tidak pernah hilang atau menumpuk.
+  elemenHalaman.daftarMataKuliahPengaturan.addEventListener("click", function (event) {
+    // Cari tombol hapus mata kuliah yang diklik
+    const tombolHapus = event.target.closest(".tombol-hapus-mata-kuliah");
+
+    // Kalau yang diklik bukan tombol hapus, abaikan
+    if (!tombolHapus) {
+      return;
+    }
+
+    // Ambil nama mata kuliah dari atribut data pada tombol
+    const namaYangAkanDihapus = tombolHapus.dataset.namaMataKuliah;
+
+    // Panggil fungsi hapus dengan konfirmasi
+    hapusMataKuliah(namaYangAkanDihapus);
+  });
+
   elemenHalaman.tombolSetujuKonfirmasi.addEventListener("click", function () {
     tutupModalKonfirmasi(true);
   });
